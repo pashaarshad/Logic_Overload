@@ -3,12 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    apiKey: "AIzaSyAcozJ8umWtn-NRPhsFsoImFRTNB6NFseo",
+    authDomain: "logic-overload.firebaseapp.com",
+    projectId: "logic-overload",
+    storageBucket: "logic-overload.firebasestorage.app",
+    messagingSenderId: "855464757899",
+    appId: "1:855464757899:web:80328be3afc1071ae3e28e",
+    measurementId: "G-T63ER35SPW",
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
