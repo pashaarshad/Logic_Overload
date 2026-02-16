@@ -229,3 +229,65 @@ export async function seedQuestions() {
     });
     await batch.commit();
 }
+
+export async function getDesignChallenges() {
+    const snap = await getDocs(collection(db, "designChallenges"));
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+}
+
+export async function seedDesignChallenges() {
+    const challenges = [
+        { name: "Red Box with Border", desc: "Create a 200px by 200px red box with a 5px solid black border." },
+        { name: "Three Flex Circles", desc: "Create three colored circles (50px) arranged horizontally with space between them using Flexbox." },
+        { name: "Centered Text", desc: "Place a heading 'Hello World' perfectly in the center of the screen (vertically and horizontally)." },
+        { name: "Hover Button", desc: "Create a button that has a blue background, but changes to green when you hover over it." },
+        { name: "Two Column Layout", desc: "Create a layout with a sidebar (30% width) and main content (70% width) side by side." },
+        { name: "Simple Navbar", desc: "Create a black navigation bar with white links: Home, About, Services, Contact." },
+        { name: "Card with Shadow", desc: "Create a white card div with a title and paragraph, adding a soft box-shadow around it." },
+        { name: "Footer with Copyright", desc: "Create a footer section with a gray background and centered text '© 2024 Your Name'." },
+        { name: "Simple Table", desc: "Create a table with 3 rows and 3 columns. Add borders to the cells." },
+        { name: "Rounded Button", desc: "Create a button with fully rounded corners (border-radius: 50px) and white text." },
+        { name: "Rotated Square", desc: "Create a square div that is rotated via CSS transform by 45 degrees." },
+        { name: "Text Shadow", desc: "Create a large heading text with a 2px gray shadow offset." },
+        { name: "Gradient Background", desc: "Create a div with a linear gradient background going from blue to purple." },
+        { name: "Square List Bullets", desc: "Create an unordered list (ul) where the bullet points are squares instead of circles." },
+        { name: "Input Focus Border", desc: "Create a text input field. When clicked (focused), its border should turn red." },
+        { name: "Grid Layout 2x2", desc: "Create a 2x2 grid of colored boxes using CSS Grid." },
+        { name: "Circle inside Square", desc: "Create a square div, and center a smaller circular div inside it." },
+        { name: "Dashed Border Box", desc: "Create a div with a thick dashed orange border and some padding inside." },
+        { name: "Text Decoration", desc: "Create a paragraph where some words are underlined and some have a line-through." },
+        { name: "Opacity Hover", desc: "Create an image placeholder (div) that fades to 50% opacity when hovered." },
+        { name: "Zebra Striped Table", desc: "Create a table where every even row has a light gray background color." },
+        { name: "Sticky Header", desc: "Create a header that stays fixed at the top of the viewport when you scroll down." },
+        { name: "Letter Spacing", desc: "Create a heading with very wide spacing between the letters (e.g., 5px)." },
+        { name: "Vertical Flex Menu", desc: "Create a vertical menu list where items are centered and spaced evenly." },
+        { name: "Top-Left Radius", desc: "Create a box where only the top-left corner is rounded, the others are sharp." },
+        { name: "Overflow Hidden", desc: "Create a small box (100px) with a lot of text inside, but hide the overflow text." },
+        { name: "Right Aligned Text", desc: "Create a paragraph of text that is aligned to the right side of the container." },
+        { name: "Blend Mode Colors", desc: "Create two overlapping circles with mix-blend-mode to show a color change at intersection." },
+        { name: "CSS Triangle", desc: "Create a triangle pointing up using only CSS borders (no background color)." },
+        { name: "Simple Tooltip", desc: "Create a text 'Hover Me' that shows a hidden span text when hovered." },
+        { name: "Text Badge", desc: "Create a notification text with a small 'New' badge next to it (styled span)." },
+        { name: "Pagination Links", desc: "Create a row of links styled as buttons: Prev, 1, 2, 3, Next." },
+        { name: "Breadcrumbs", desc: "Create a breadcrumb navigation: Home > Products > Details." },
+        { name: "Blockquote Style", desc: "Style a blockquote element with a left border and italic text." },
+        { name: "Custom HR Line", desc: "Style a horizontal rule (hr) to be a dotted line 5px thick." },
+        { name: "Button Group", desc: "Create three buttons joined together (no space between them) as a group." },
+        { name: "Full Screen Section", desc: "Create a section that takes up exactly 100% of the viewport height (100vh)." },
+        { name: "Transparent Background", desc: "Create a div with a semi-transparent black background (rgba) over whitespace." },
+        { name: "Negative Margin", desc: "Create two boxes where the second box overlaps the first one using negative margin." },
+        { name: "Link Hover Underline", desc: "Create a link that has no underline normally, but gets one on hover." },
+        { name: "Uppercase Text", desc: "Create a paragraph that is forced to uppercase using CSS text-transform." },
+        { name: "Different Borders", desc: "Create a box with a different border color/style on each of the four sides." },
+        { name: "Relative Positioning", desc: "Create a box and verify its position using 'top' and 'left' relative to its normal spot." },
+        { name: "Cursor Pointer", desc: "Create a div that changes the mouse cursor to a pointer (hand) when hovered." },
+        { name: "Outline Offset", desc: "Create a button with an outline that is offset 5px away from the border." }
+    ];
+
+    const batch = writeBatch(db);
+    challenges.forEach((c, i) => {
+        const id = `design_q${i + 1}`;
+        batch.set(doc(db, "designChallenges", id), { ...c, id }, { merge: true });
+    });
+    await batch.commit();
+}

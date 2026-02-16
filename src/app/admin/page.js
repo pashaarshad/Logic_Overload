@@ -17,6 +17,7 @@ import {
     seedRounds,
     seedQuestions,
     updateUserDoc,
+    getDesignChallenges,
 } from "@/lib/firestore";
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
@@ -41,6 +42,7 @@ export default function AdminPage() {
     const [editingQuestion, setEditingQuestion] = useState(null);
     const [viewSubmission, setViewSubmission] = useState(null);
     const [viewDetails, setViewDetails] = useState(null); // New state for details modal
+    const [designChallenges, setDesignChallenges] = useState([]); // New state
     const [message, setMessage] = useState("");
 
 
@@ -76,6 +78,15 @@ export default function AdminPage() {
             try {
                 const qs = await getQuestions("round1");
                 setQuestionsState(qs);
+
+                // Load Design Challenges
+                try {
+                    const designs = await getDesignChallenges();
+                    setDesignChallenges(designs);
+                } catch (e) {
+                    console.error("Failed to load designs", e);
+                }
+
             } catch (err) {
                 console.error("Failed to load questions (likely missing index)", err);
                 showMessage("⚠️ Error loading questions. Check console/indexes.");
@@ -234,6 +245,7 @@ export default function AdminPage() {
                     {[
                         { id: "participants", icon: "👥", label: "Participants" },
                         { id: "admins", icon: "🛡️", label: "Admins" }, // New tab
+                        { id: "design", icon: "🎨", label: "Design Tasks" }, // New tab
                         { id: "rounds", icon: "🔧", label: "Round Settings" },
                         { id: "questions", icon: "📝", label: "Questions" },
                         { id: "scores", icon: "📊", label: "Scores & Marks" },
@@ -560,12 +572,44 @@ export default function AdminPage() {
                                                             </span>
                                                         </td>
                                                         <td>
-                                                            <button className="btn btn-sm btn-danger" onClick={() => handleToggleAdmin(u.id, u.role)}>
-                                                                Remove Admin role
-                                                            </button>
+                                                            {u.email === "arshad@logic.com" ? (
+                                                                <span style={{ fontSize: "0.8rem", opacity: 0.7 }}>🔒 Permanent</span>
+                                                            ) : (
+                                                                <button className="btn btn-sm btn-danger" onClick={() => handleToggleAdmin(u.id, u.role)}>
+                                                                    Remove Admin role
+                                                                </button>
+                                                            )}
                                                         </td>
                                                     </tr>
                                                 ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* ─── Design Tasks Tab ─── */}
+                            {activeTab === "design" && (
+                                <div>
+                                    <h2 className="section-title" style={{ marginBottom: 24 }}>🎨 Design Tasks ({designChallenges.length})</h2>
+                                    <div className="glass-card" style={{ padding: 0, overflow: "auto", maxHeight: "60vh" }}>
+                                        <table className="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Task Name</th>
+                                                    <th>Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {designChallenges.map((c) => (
+                                                    <tr key={c.id}>
+                                                        <td style={{ fontWeight: 600 }}>{c.name}</td>
+                                                        <td>{c.desc}</td>
+                                                    </tr>
+                                                ))}
+                                                {designChallenges.length === 0 && (
+                                                    <tr><td colSpan="2" style={{ textAlign: "center", padding: 20 }}>No tasks loaded.</td></tr>
+                                                )}
                                             </tbody>
                                         </table>
                                     </div>

@@ -6,32 +6,15 @@ import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import Timer from "@/components/Timer";
 import AntiCheat from "@/components/AntiCheat";
-import { getAttempt, saveAttempt, getRoundConfig } from "@/lib/firestore";
+import { getAttempt, saveAttempt, getRoundConfig, getDesignChallenges, seedDesignChallenges } from "@/lib/firestore";
 
 const ROUND_ID = "round2";
 
 // 20 design descriptions — in production, replace with image URLs in Firestore
-const DESIGN_THEMES = [
-    { id: "d1", name: "E-commerce Product Card", desc: "A sleek product card with image, price, and buy button" },
-    { id: "d2", name: "Portfolio Hero Section", desc: "A personal portfolio hero with gradient background" },
-    { id: "d3", name: "Login Form", desc: "A modern glassmorphism login form" },
-    { id: "d4", name: "Weather Dashboard", desc: "A weather widget showing temperature and forecast" },
-    { id: "d5", name: "Pricing Table", desc: "Three-tier pricing comparison cards" },
-    { id: "d6", name: "Music Player UI", desc: "A compact music player with controls and progress bar" },
-    { id: "d7", name: "Chat Interface", desc: "A messaging app chat bubble layout" },
-    { id: "d8", name: "Blog Post Card", desc: "A blog card with thumbnail, title, excerpt, and author" },
-    { id: "d9", name: "Navigation Bar", desc: "A responsive navbar with logo, links, and CTA button" },
-    { id: "d10", name: "Dashboard Stats", desc: "Analytics dashboard with stat cards and mini charts" },
-    { id: "d11", name: "Social Media Post", desc: "An Instagram-style post card with engagement buttons" },
-    { id: "d12", name: "Contact Form", desc: "A clean contact form with validation styling" },
-    { id: "d13", name: "File Upload Area", desc: "A drag-and-drop file upload zone" },
-    { id: "d14", name: "User Profile Card", desc: "A profile card with avatar, bio, and social links" },
-    { id: "d15", name: "Notification Panel", desc: "A dropdown notification list with read/unread states" },
-    { id: "d16", name: "Calculator UI", desc: "A calculator layout with number and operation buttons" },
-    { id: "d17", name: "Recipe Card", desc: "A food recipe card with ingredients and cook time" },
-    { id: "d18", name: "Search Results", desc: "A Google-style search results page" },
-    { id: "d19", name: "Timeline View", desc: "A vertical timeline with events and dates" },
-    { id: "d20", name: "404 Error Page", desc: "A creative 404 not found page" },
+// Fallback themes in case Firestore is empty initially
+const FALLBACK_THEMES = [
+    { id: "d1", name: "Responsive Navbar", desc: "Create a fully responsive navbar with 4 links and a logo." },
+    { id: "d2", name: "Center a Div", desc: "Center a div both vertically and horizontally using Grid or Flexbox." },
 ];
 
 export default function Round2Page() {
@@ -40,7 +23,7 @@ export default function Round2Page() {
     const [assignedDesign, setAssignedDesign] = useState(null);
     const [html, setHtml] = useState("<!-- Write your HTML here -->\n<div>\n  \n</div>");
     const [css, setCss] = useState("/* Write your CSS here */\n");
-    const [js, setJs] = useState("// Write your JavaScript here\n");
+    // JS removed
     const [startTime, setStartTime] = useState(null);
     const [timeLimit, setTimeLimit] = useState(2700); // 45 min
     const [completed, setCompleted] = useState(false);
@@ -63,7 +46,6 @@ export default function Round2Page() {
                 setAssignedDesign(attempt.design);
                 setHtml(attempt.html || "");
                 setCss(attempt.css || "");
-                setJs(attempt.js || "");
                 setStartTime(attempt.startTime);
                 setPageLoading(false);
                 return;
@@ -73,11 +55,25 @@ export default function Round2Page() {
                 setAssignedDesign(attempt.design);
                 setHtml(attempt.html || "");
                 setCss(attempt.css || "");
-                setJs(attempt.js || "");
                 setStartTime(attempt.startTime);
             } else {
+                // Fetch challenges from Firestore
+                let challenges = await getDesignChallenges();
+                if (challenges.length === 0) {
+                    try {
+                        await seedDesignChallenges();
+                        challenges = await getDesignChallenges();
+                    } catch (e) {
+                        console.error("Auto-seed failed", e);
+                        challenges = FALLBACK_THEMES;
+                    }
+                }
+
                 // Assign random design
-                const design = DESIGN_THEMES[Math.floor(Math.random() * DESIGN_THEMES.length)];
+                const design = challenges.length > 0
+                    ? challenges[Math.floor(Math.random() * challenges.length)]
+                    : FALLBACK_THEMES[0];
+
                 const now = Date.now();
                 setAssignedDesign(design);
                 setStartTime(now);
@@ -85,7 +81,7 @@ export default function Round2Page() {
                     design,
                     html: "",
                     css: "",
-                    js: "",
+
                     startTime: now,
                     completed: false,
                     team: userData?.team || "",
@@ -102,7 +98,7 @@ export default function Round2Page() {
     useEffect(() => {
         if (!user || completed || pageLoading) return;
         const interval = setInterval(() => {
-            saveAttempt(user.uid, ROUND_ID, { html, css, js });
+            saveAttempt(user.uid, ROUND_ID, { html, css });
         }, 30000);
         return () => clearInterval(interval);
     }, [user, html, css, js, completed, pageLoading]);
@@ -112,7 +108,6 @@ export default function Round2Page() {
         await saveAttempt(user.uid, ROUND_ID, {
             html,
             css,
-            js,
             completed: true,
             endTime: Date.now(),
             timeTaken: Math.floor((Date.now() - startTime) / 1000),
@@ -129,7 +124,7 @@ export default function Round2Page() {
         return `
       <html>
         <head><style>${css}</style></head>
-        <body>${html}<script>${js}<\/script></body>
+        <body>${html}</body>
       </html>
     `;
     };
@@ -184,7 +179,7 @@ export default function Round2Page() {
                     {/* Code Editor */}
                     <div className="glass-card" style={{ padding: 0, overflow: "hidden" }}>
                         <div style={{ display: "flex", borderBottom: "1px solid var(--border)" }}>
-                            {["html", "css", "js"].map((tab) => (
+                            {["html", "css"].map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
@@ -201,11 +196,10 @@ export default function Round2Page() {
                             ))}
                         </div>
                         <textarea
-                            value={activeTab === "html" ? html : activeTab === "css" ? css : js}
+                            value={activeTab === "html" ? html : css}
                             onChange={(e) => {
                                 if (activeTab === "html") setHtml(e.target.value);
-                                else if (activeTab === "css") setCss(e.target.value);
-                                else setJs(e.target.value);
+                                else setCss(e.target.value);
                             }}
                             style={{
                                 width: "100%", height: "calc(100% - 48px)", padding: 16,
