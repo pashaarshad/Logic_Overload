@@ -17,6 +17,8 @@ import {
     seedQuestions,
     updateUserDoc,
 } from "@/lib/firestore";
+import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 
 const ROUNDS = ["round1", "round2", "round3", "round4"];
 const ROUND_NAMES = {
@@ -38,10 +40,7 @@ export default function AdminPage() {
     const [editingQuestion, setEditingQuestion] = useState(null);
     const [message, setMessage] = useState("");
 
-    useEffect(() => {
-        if (!loading && !user) router.push("/");
-        if (!loading && user && !isAdmin) router.push("/dashboard");
-    }, [user, loading, isAdmin, router]);
+
 
     useEffect(() => {
         if (!user || !isAdmin) return;
@@ -113,10 +112,73 @@ export default function AdminPage() {
         loadData();
     };
 
-    if (loading || !user || !isAdmin) {
+    if (loading) {
         return (
             <div className="page-center">
                 <div className="spinner-container"><div className="spinner"></div></div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return (
+            <div className="page-center">
+                <Navbar />
+                <div className="login-container glass-card" style={{ maxWidth: 400, margin: "40px auto" }}>
+                    <h2 className="section-title" style={{ textAlign: "center", marginBottom: 24 }}>🛡️ Admin Login</h2>
+                    <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        const username = e.target.username.value.trim();
+                        const password = e.target.password.value.trim();
+
+                        if ((username.toLowerCase() === "arshad" || username.toLowerCase() === "arsh") && password === "logic65") {
+                            setMessage("🔄 Authenticating...");
+                            const email = "arshad@logic.com";
+                            try {
+                                await signInWithEmailAndPassword(auth, email, password);
+                            } catch (err) {
+                                if (err.code === "auth/user-not-found" || err.code === "auth/invalid-credential") {
+                                    // Auto-create if not exists
+                                    try {
+                                        const cred = await createUserWithEmailAndPassword(auth, email, password);
+                                        await updateUserDoc(cred.user.uid, { role: "admin", name: "Arshad Admin" });
+                                        // login successful
+                                    } catch (createErr) {
+                                        showMessage("❌ Create Failed: " + createErr.message);
+                                    }
+                                } else {
+                                    showMessage("❌ Login Failed: " + err.message);
+                                }
+                            }
+                        } else {
+                            showMessage("❌ Invalid credentials");
+                        }
+                    }}>
+                        <div className="input-group" style={{ marginBottom: 16 }}>
+                            <label>Username</label>
+                            <input name="username" className="input" placeholder="arshad" autoFocus />
+                        </div>
+                        <div className="input-group" style={{ marginBottom: 24 }}>
+                            <label>Password</label>
+                            <input name="password" type="password" className="input" placeholder="•••••••" />
+                        </div>
+                        <button className="btn btn-primary btn-full">Login as Admin</button>
+                        {message && <div style={{ marginTop: 16, textAlign: "center", color: "var(--accent-primary)" }}>{message}</div>}
+                    </form>
+                </div>
+            </div>
+        );
+    }
+
+    if (!isAdmin) {
+        return (
+            <div className="page-center">
+                <Navbar />
+                <div className="glass-card" style={{ textAlign: "center", maxWidth: 400 }}>
+                    <h1 className="hero-title" style={{ fontSize: "2rem", marginBottom: 16 }}>🚫 Access Denied</h1>
+                    <p className="subtitle" style={{ marginBottom: 24 }}>You do not have admin permissions.</p>
+                    <button className="btn btn-secondary" onClick={() => router.push("/dashboard")}>Go to Dashboard</button>
+                </div>
             </div>
         );
     }
