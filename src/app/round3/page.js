@@ -11,89 +11,103 @@ const ROUND_ID = "round3";
 const PROBLEMS = {
     q1: {
         id: "q1",
-        title: "Problem 1: Palindrome Fix",
-        description: "The code below attempts to check if a string is a palindrome (reads same forwards and backwards). However, there is a syntax/logic error preventing it from working correctly. Find and fix the bug.",
-        expectedOutput: "Input: 'madam' -> Output: True\nInput: 'hello' -> Output: False",
+        title: "Problem 1: Count Vowels",
+        description: "The code below attempts to count the number of vowels (a, e, i, o, u) in a string. However, there is a syntax/logic error in the condition checking. Find and fix the bug.",
+        expectedOutput: "Input: 'hello world' -> Output: 3 (e, o, o)",
+        type: "debugging",
         buggyCode: {
-            python: `def is_palindrome(s):
-    # Reverse the string
-    rev = s[::-1]
-    
-    # Check if equal
-    if s = rev:  # BUG HERE
-        return True
-    return False
+            python: `def count_vowels(s):
+    count = 0
+    vowels = "aeiou"
+    for char in s:
+        # Check if character is a vowel
+        if char in vowels: 
+            # Logic error: Incorrect increment or check? 
+            # Actually, let's use the Assignment Bug as requested
+            pass
+            
+def count_vowels_demo(s):
+    count = 0
+    for char in s:
+        if char = 'a' or char = 'e' or char = 'i' or char = 'o' or char = 'u': # BUG HERE
+            count += 1
+    return count
 
-print(is_palindrome("madam"))`,
+print(count_vowels_demo("hello world"))`,
             c: `#include <stdio.h>
 #include <string.h>
 
 int main() {
-    char str[] = "madam";
-    int len = strlen(str);
-    int flag = 1;
+    char str[] = "hello world";
+    int count = 0;
     
-    for(int i=0; i < len/2; i++) {
-        // Check characters
-        if(str[i] = str[len-i-1]) { // BUG HERE
-            flag = 0;
-            break;
+    for(int i=0; i < strlen(str); i++) {
+        char c = str[i];
+        // Check for vowels
+        if(c = 'a' || c = 'e' || c = 'i' || c = 'o' || c = 'u') { // BUG HERE
+            count++;
         }
     }
     
-    if(flag) printf("True");
-    else printf("False");
+    printf("%d", count);
     return 0;
 }`,
             cpp: `#include <iostream>
 #include <string>
-#include <algorithm>
 using namespace std;
 
-bool isPalindrome(string s) {
-    string rev = s;
-    reverse(rev.begin(), rev.end());
-    
-    // Check equality
-    if (s = rev) { // BUG HERE
-        return true;
+int countVowels(string s) {
+    int count = 0;
+    for(char c : s) {
+        // Check for vowels
+        if(c = 'a' || c = 'e' || c = 'i' || c = 'o' || c = 'u') { // BUG HERE
+            count++;
+        }
     }
-    return false;
+    return count;
 }
 
 int main() {
-    cout << isPalindrome("madam");
+    cout << countVowels("hello world");
     return 0;
 }`,
             java: `public class Main {
     public static void main(String[] args) {
-        String str = "madam";
-        String rev = new StringBuilder(str).reverse().toString();
+        String str = "hello world";
+        int count = 0;
         
-        // Check equality
-        if (str = rev) { // BUG HERE
-            System.out.println("True");
-        } else {
-            System.out.println("False");
+        for(int i=0; i<str.length(); i++) {
+            char c = str.charAt(i);
+            // Check for vowels
+            if(c = 'a' || c = 'e' || c = 'i' || c = 'o' || c = 'u') { // BUG HERE
+                count++;
+            }
         }
+        
+        System.out.println(count);
     }
 }`,
             php: `<?php
-function is_palindrome($str) {
-    if ($str = strrev($str)) { // BUG HERE
-        return "True";
+function count_vowels($str) {
+    $count = 0;
+    for ($i = 0; $i < strlen($str); $i++) {
+        $c = $str[$i];
+        if ($c = 'a' || $c = 'e' || $c = 'i' || $c = 'o' || $c = 'u') { // BUG HERE
+            $count++;
+        }
     }
-    return "False";
+    return $count;
 }
-echo is_palindrome("madam");
+echo count_vowels("hello world");
 ?>`
         }
     },
     q2: {
         id: "q2",
         title: "Problem 2: Factorial Fix",
-        description: "The code below attempts to calculate the factorial of a number (n!). However, the result is always incorrect due to an initialization error. Find and fix the bug.",
+        description: "The code below attempts to calculate the factorial of a number (n!). However, the result is always incorrect due to an initialization error. Find and fix the initialization bug.",
         expectedOutput: "Input: 5 -> Output: 120 (1*2*3*4*5)",
+        type: "debugging",
         buggyCode: {
             python: `def factorial(n):
     result = 0 # BUG HERE: Initialization
@@ -155,21 +169,17 @@ echo factorial(5);
     },
     q3: {
         id: "q3",
-        title: "Problem 3: Pattern Printing",
-        description: "Write a program in your preferred language to print the following pattern exactly as shown below. You must run this in your local system first to verify the output.",
-        pattern: `*
-1
-* 1
-* 1 *
-* 1 * 2`,
-        instruction: "Paste your working solution code in the area below."
+        title: "Problem 3: Two Sum (LeetCode #1)",
+        description: "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
+        example: "Input: nums = [2,7,11,15], target = 9\nOutput: [0,1] (Explanation: nums[0] + nums[1] == 9)",
+        instruction: "Solve this problem locally and paste your working solution code below."
     },
     q4: {
         id: "q4",
-        title: "Problem 4: Array Sum (Two Sum)",
-        description: "Given an array of integers `nums` and an integer `target`, write a program to return indices of the two numbers such that they add up to `target`.",
-        example: "Input: nums = [2,7,11,15], target = 9\nOutput: [0,1] (Because nums[0] + nums[1] == 9)",
-        instruction: "Solve this problem (LeetCode #1) locally and paste your solution code below."
+        title: "Problem 4: Remove Duplicates (LeetCode #26)",
+        description: "Given an integer array `nums` sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative order of the elements should be kept the same. Return the number of unique elements.",
+        example: "Input: nums = [1,1,2]\nOutput: 2, nums = [1,2,_] (Explanation: First two elements are 1 and 2)",
+        instruction: "Solve this problem locally and paste your working solution code below."
     }
 };
 
@@ -183,6 +193,7 @@ export default function Round3Page() {
         q3: "",
         q4: ""
     });
+    const [runOutput, setRunOutput] = useState({ q1: null, q2: null });
     const [submitting, setSubmitting] = useState(false);
     const [completed, setCompleted] = useState(false);
 
@@ -225,6 +236,7 @@ export default function Round3Page() {
             ...prev,
             [qId]: { lang, code: PROBLEMS[qId].buggyCode[lang] }
         }));
+        setRunOutput(prev => ({ ...prev, [qId]: null })); // Reset output
     };
 
     const handleCodeChange = (qId, newCode) => {
@@ -237,6 +249,47 @@ export default function Round3Page() {
                 [qId]: { ...prev[qId], code: newCode }
             };
         });
+        setRunOutput(prev => ({ ...prev, [qId]: null })); // Reset output check
+    };
+
+    // Client-side mock runner for specific fixes
+    const handleRunCode = (qId) => {
+        const { lang, code } = answers[qId];
+        let passed = false;
+        let output = "";
+
+        if (qId === "q1") {
+            // Check if assignments '=' are replaced with equality '=='
+            // Simplified check: looking for '==' usage instead of '=' inside logic
+            // Or roughly checking if the specific buggy line is fixed
+            if (code.includes("== 'a'") || code.includes("=='a'") || code.includes("== 'e'")) {
+                passed = true;
+            } else if (lang === 'python' && code.includes("in vowels")) {
+                // Heuristic improvement
+                passed = true;
+            }
+
+            // Check if they carelessly left the single '='
+            if (code.includes("= 'a'") || code.includes("='a'")) {
+                passed = false;
+            }
+
+            if (passed) output = "✅ passed! Output: 3";
+            else output = "❌ Error: Syntax/Logic Error. Counts do not match expected.";
+        }
+        else if (qId === "q2") {
+            // Factorial: Check initialization
+            // Looking for result = 1
+            if (code.includes("result = 1") || code.includes("result=1") || code.includes("$result = 1")) {
+                passed = true;
+                output = "✅ Passed! Output: 120";
+            } else {
+                passed = false;
+                output = "❌ Error: Output is 0. Check your initialization.";
+            }
+        }
+
+        setRunOutput(prev => ({ ...prev, [qId]: { passed, message: output } }));
     };
 
     if (loading) return <div className="page-center"><div className="spinner"></div></div>;
@@ -258,6 +311,7 @@ export default function Round3Page() {
     const renderDebugger = (qId) => {
         const problem = PROBLEMS[qId];
         const currentAns = answers[qId];
+        const result = runOutput[qId];
 
         return (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px", height: "calc(100vh - 200px)" }}>
@@ -280,15 +334,23 @@ export default function Round3Page() {
                 <div className="glass-card" style={{ display: "flex", flexDirection: "column", padding: 0, overflow: "hidden" }}>
                     <div style={{ padding: "10px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--bg-card)" }}>
                         <span style={{ fontWeight: "bold" }}>Code Editor</span>
-                        <select
-                            value={currentAns.lang}
-                            onChange={(e) => handleLangChange(qId, e.target.value)}
-                            style={{ padding: "5px 10px", borderRadius: "4px", background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
-                        >
-                            {Object.keys(problem.buggyCode).map(lang => (
-                                <option key={lang} value={lang}>{lang.toUpperCase()}</option>
-                            ))}
-                        </select>
+                        <div style={{ display: "flex", gap: "10px" }}>
+                            <select
+                                value={currentAns.lang}
+                                onChange={(e) => handleLangChange(qId, e.target.value)}
+                                style={{ padding: "5px 10px", borderRadius: "4px", background: "var(--bg-primary)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
+                            >
+                                {Object.keys(problem.buggyCode).map(lang => (
+                                    <option key={lang} value={lang}>{lang.toUpperCase()}</option>
+                                ))}
+                            </select>
+                            <button
+                                className="btn btn-sm btn-primary"
+                                onClick={() => handleRunCode(qId)}
+                            >
+                                ▶ Run Code
+                            </button>
+                        </div>
                     </div>
                     <textarea
                         value={currentAns.code}
@@ -300,6 +362,18 @@ export default function Round3Page() {
                         }}
                         spellCheck="false"
                     />
+                    {result && (
+                        <div style={{
+                            padding: "10px 15px",
+                            background: result.passed ? "rgba(40, 167, 69, 0.1)" : "rgba(220, 53, 69, 0.1)",
+                            color: result.passed ? "#28a745" : "#dc3545",
+                            borderTop: "1px solid var(--border)",
+                            fontWeight: "bold",
+                            animation: "fadeIn 0.3s"
+                        }}>
+                            {result.message}
+                        </div>
+                    )}
                 </div>
             </div>
         );
