@@ -50,23 +50,41 @@ export default function AdminPage() {
 
     const loadData = async () => {
         setPageLoading(true);
-        const [usersData, attemptsData] = await Promise.all([
-            getAllUsers(),
-            getAllAttempts(),
-        ]);
+        try {
+            const [usersData, attemptsData] = await Promise.all([
+                getAllUsers(),
+                getAllAttempts(),
+            ]);
 
-        const configs = {};
-        for (const r of ROUNDS) {
-            configs[r] = await getRoundConfig(r);
+            setUsers(usersData);
+            setAttempts(attemptsData);
+
+            // Load round configs separately to safeguard against individual failures
+            try {
+                const configs = {};
+                for (const r of ROUNDS) {
+                    configs[r] = await getRoundConfig(r);
+                }
+                setRoundConfigs(configs);
+            } catch (err) {
+                console.error("Failed to load round configs", err);
+            }
+
+            // Load questions separately - this often fails due to missing index
+            try {
+                const qs = await getQuestions("round1");
+                setQuestionsState(qs);
+            } catch (err) {
+                console.error("Failed to load questions (likely missing index)", err);
+                showMessage("⚠️ Error loading questions. Check console/indexes.");
+            }
+
+        } catch (err) {
+            console.error("Critical error loading admin data", err);
+            showMessage("❌ Critical Error: " + err.message);
+        } finally {
+            setPageLoading(false);
         }
-
-        const qs = await getQuestions("round1");
-
-        setUsers(usersData);
-        setAttempts(attemptsData);
-        setRoundConfigs(configs);
-        setQuestionsState(qs);
-        setPageLoading(false);
     };
 
     const showMessage = (msg) => {
