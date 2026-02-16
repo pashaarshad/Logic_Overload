@@ -20,18 +20,32 @@ export function AuthProvider({ children }) {
                 let userDoc = await getUserDoc(firebaseUser.uid);
 
                 if (!userDoc) {
-                    // First login — assign team number (FIFO)
-                    const teamNumber = await getNextTeamNumber();
-                    const newUser = {
-                        name: firebaseUser.displayName || firebaseUser.email,
-                        email: firebaseUser.email,
-                        photoURL: firebaseUser.photoURL || null,
-                        team: `Team ${teamNumber}`,
-                        teamNumber: teamNumber,
-                        role: "candidate",
-                    };
-                    await createUserDoc(firebaseUser.uid, newUser);
-                    userDoc = { id: firebaseUser.uid, ...newUser };
+                    // First login check
+
+                    // Special check for Admin email to prevent Team assignment
+                    if (firebaseUser.email === "arshad@logic.com") {
+                        const newUser = {
+                            name: "Arshad Admin",
+                            email: firebaseUser.email,
+                            role: "admin",
+                            // No team assigned
+                        };
+                        await createUserDoc(firebaseUser.uid, newUser);
+                        userDoc = { id: firebaseUser.uid, ...newUser };
+                    } else {
+                        // Regular Candidate - Assign Team
+                        const teamNumber = await getNextTeamNumber();
+                        const newUser = {
+                            name: firebaseUser.displayName || firebaseUser.email,
+                            email: firebaseUser.email,
+                            photoURL: firebaseUser.photoURL || null,
+                            team: `Team ${teamNumber}`,
+                            teamNumber: teamNumber,
+                            role: "candidate",
+                        };
+                        await createUserDoc(firebaseUser.uid, newUser);
+                        userDoc = { id: firebaseUser.uid, ...newUser };
+                    }
                 }
 
                 setUserData(userDoc);
