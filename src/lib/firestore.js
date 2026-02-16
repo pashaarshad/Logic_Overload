@@ -85,6 +85,11 @@ export async function saveAttempt(uid, roundId, data) {
     await setDoc(doc(db, "attempts", attemptId), data, { merge: true });
 }
 
+export async function deleteAttempt(uid, roundId) {
+    const attemptId = `${uid}_${roundId}`;
+    await deleteDoc(doc(db, "attempts", attemptId));
+}
+
 export function onAttemptSnapshot(uid, roundId, callback) {
     const attemptId = `${uid}_${roundId}`;
     return onSnapshot(doc(db, "attempts", attemptId), (snap) => {
@@ -132,7 +137,7 @@ export async function seedRounds() {
         {
             id: "round1",
             title: "Logic & MCQ Quiz",
-            password: "round1SDCArsh",
+            password: "logic001",
             timeLimit: 30,
             totalQuestions: 30,
             isActive: true,
@@ -176,36 +181,43 @@ export async function seedRounds() {
 
 export async function seedQuestions() {
     const questions = [
-        { order: 1, question: "Who is known as the Father of Artificial Intelligence?", options: ["Alan Turing", "John McCarthy", "Marvin Minsky", "Geoffrey Hinton"], correctAnswer: 1, roundId: "round1" },
-        { order: 2, question: "Who invented the first mechanical computer?", options: ["Blaise Pascal", "Charles Babbage", "John von Neumann", "Ada Lovelace"], correctAnswer: 1, roundId: "round1" },
-        { order: 3, question: "What does CPU stand for?", options: ["Central Processing Unit", "Central Program Utility", "Computer Processing Unit", "Central Processor Utility"], correctAnswer: 0, roundId: "round1" },
-        { order: 4, question: "Which programming language is known as the mother of all languages?", options: ["C", "FORTRAN", "COBOL", "Assembly"], correctAnswer: 0, roundId: "round1" },
-        { order: 5, question: "What is the binary representation of the decimal number 10?", options: ["1010", "1100", "1001", "1110"], correctAnswer: 0, roundId: "round1" },
-        { order: 6, question: "Which data structure uses LIFO principle?", options: ["Queue", "Stack", "Array", "Linked List"], correctAnswer: 1, roundId: "round1" },
-        { order: 7, question: "HTML stands for?", options: ["Hyper Text Markup Language", "High Tech Modern Language", "Hyper Transfer Markup Language", "Home Tool Markup Language"], correctAnswer: 0, roundId: "round1" },
-        { order: 8, question: "Which company developed the Java programming language?", options: ["Microsoft", "Apple", "Sun Microsystems", "Google"], correctAnswer: 2, roundId: "round1" },
-        { order: 9, question: "What is the time complexity of binary search?", options: ["O(n)", "O(log n)", "O(n²)", "O(1)"], correctAnswer: 1, roundId: "round1" },
-        { order: 10, question: "Which protocol is used to send emails?", options: ["FTP", "HTTP", "SMTP", "TCP"], correctAnswer: 2, roundId: "round1" },
-        { order: 11, question: "What does SQL stand for?", options: ["Structured Query Language", "Simple Query Language", "Standard Query Logic", "Sequential Query Language"], correctAnswer: 0, roundId: "round1" },
-        { order: 12, question: "Which of these is NOT an operating system?", options: ["Linux", "Windows", "Oracle", "macOS"], correctAnswer: 2, roundId: "round1" },
-        { order: 13, question: "What is the full form of RAM?", options: ["Read Access Memory", "Random Access Memory", "Run Access Memory", "Random Allocation Memory"], correctAnswer: 1, roundId: "round1" },
-        { order: 14, question: "Who is known as the Father of Computer Science?", options: ["Charles Babbage", "Alan Turing", "Tim Berners-Lee", "Dennis Ritchie"], correctAnswer: 1, roundId: "round1" },
-        { order: 15, question: "Which sorting algorithm has the best average-case time complexity?", options: ["Bubble Sort", "Selection Sort", "Merge Sort", "Insertion Sort"], correctAnswer: 2, roundId: "round1" },
-        { order: 16, question: "What does IP stand for in networking?", options: ["Internet Protocol", "Internal Process", "Internet Procedure", "Intranet Protocol"], correctAnswer: 0, roundId: "round1" },
-        { order: 17, question: "Which generation of computers used transistors?", options: ["First", "Second", "Third", "Fourth"], correctAnswer: 1, roundId: "round1" },
-        { order: 18, question: "What is the default port number for HTTP?", options: ["21", "25", "80", "443"], correctAnswer: 2, roundId: "round1" },
-        { order: 19, question: "Which language is used for styling web pages?", options: ["HTML", "CSS", "JavaScript", "Python"], correctAnswer: 1, roundId: "round1" },
-        { order: 20, question: "What does DBMS stand for?", options: ["Data Base Management System", "Data Backup Management Service", "Digital Base Mapping System", "Data Binary Management System"], correctAnswer: 0, roundId: "round1" },
-        { order: 21, question: "Which of the following is a NoSQL database?", options: ["MySQL", "PostgreSQL", "MongoDB", "Oracle"], correctAnswer: 2, roundId: "round1" },
-        { order: 22, question: "What is the first computer virus called?", options: ["ILOVEYOU", "Melissa", "Creeper", "MyDoom"], correctAnswer: 2, roundId: "round1" },
-        { order: 23, question: "In OOP, what does encapsulation mean?", options: ["Hiding implementation details", "Inheriting from parent class", "Multiple forms of a function", "Creating objects"], correctAnswer: 0, roundId: "round1" },
-        { order: 24, question: "Which topology connects all devices to a single cable?", options: ["Star", "Ring", "Bus", "Mesh"], correctAnswer: 2, roundId: "round1" },
-        { order: 25, question: "What does the 'www' stand for in a URL?", options: ["Wide Web World", "World Wide Web", "Web World Wide", "World Web Wide"], correctAnswer: 1, roundId: "round1" },
-        { order: 26, question: "Which of these is a valid JavaScript data type?", options: ["float", "integer", "undefined", "character"], correctAnswer: 2, roundId: "round1" },
-        { order: 27, question: "What is 1 KB equal to?", options: ["1000 bytes", "1024 bytes", "1024 bits", "1000 bits"], correctAnswer: 1, roundId: "round1" },
-        { order: 28, question: "Who created the Linux operating system?", options: ["Bill Gates", "Steve Jobs", "Linus Torvalds", "Dennis Ritchie"], correctAnswer: 2, roundId: "round1" },
-        { order: 29, question: "Which layer of the OSI model handles routing?", options: ["Transport", "Data Link", "Network", "Session"], correctAnswer: 2, roundId: "round1" },
-        { order: 30, question: "What is the output of 2 + '2' in JavaScript?", options: ["4", "22", "NaN", "Error"], correctAnswer: 1, roundId: "round1" },
+        // 1-5: Shell, Basic OS, DS, Java
+        { order: 1, question: "Which command lists files in a directory in Linux?", options: ["ls", "dir", "show", "list"], correctAnswer: 0, roundId: "round1" },
+        { order: 2, question: "Which data structure follows LIFO?", options: ["Queue", "Stack", "Tree", "Graph"], correctAnswer: 1, roundId: "round1" },
+        { order: 3, question: "What acts as a bridge between hardware and software?", options: ["Compiler", "Operating System", "Interpreter", "Assembler"], correctAnswer: 1, roundId: "round1" },
+        { order: 4, question: "In Java, standard output is printed using?", options: ["System.out.print", "console.log", "print", "echo"], correctAnswer: 0, roundId: "round1" },
+        { order: 5, question: "Which command changes the current directory?", options: ["mv", "cd", "cp", "pwd"], correctAnswer: 1, roundId: "round1" },
+
+        // 6-12: Python, PHP, Networking, Cybersecurity
+        { order: 6, question: "What is the file extension for Python?", options: [".py", ".pt", ".python", ".p"], correctAnswer: 0, roundId: "round1" },
+        { order: 7, question: "PHP scripts define blocks using?", options: ["<?php ... ?>", "<script ...>", "<? ... ?>", "<php ...>"], correctAnswer: 0, roundId: "round1" },
+        { order: 8, question: "Which OSI layer transmits raw bits?", options: ["Physical", "Data Link", "Network", "Transport"], correctAnswer: 0, roundId: "round1" },
+        { order: 9, question: "What is 127.0.0.1?", options: ["Public IP", "Localhost", "Router IP", "Gateway"], correctAnswer: 1, roundId: "round1" },
+        { order: 10, question: "What does SQL Injection target?", options: ["Operating System", "Database", "Firewall", "Network"], correctAnswer: 1, roundId: "round1" },
+        { order: 11, question: "Which port does HTTPS use?", options: ["80", "21", "443", "25"], correctAnswer: 2, roundId: "round1" },
+        { order: 12, question: "Who is known as the father of AI?", options: ["Alan Turing", "John McCarthy", "Elon Musk", "Guido van Rossum"], correctAnswer: 1, roundId: "round1" },
+
+        // 13-19: Final Year topics (AI, General CS)
+        { order: 13, question: "What is the third layer of the OSI Model?", options: ["Physical", "Data Link", "Network", "Transport"], correctAnswer: 2, roundId: "round1" },
+        { order: 14, question: "Which algorithm mimics the human brain?", options: ["Neural Networks", "Genetic", "Greedy", "Sorting"], correctAnswer: 0, roundId: "round1" },
+        { order: 15, question: "Who founded the World Wide Web?", options: ["Tim Berners-Lee", "Bill Gates", "Steve Jobs", "Vint Cerf"], correctAnswer: 0, roundId: "round1" },
+        { order: 16, question: "What represents 'TRUE' in binary?", options: ["0", "1", "-1", "10"], correctAnswer: 1, roundId: "round1" },
+        { order: 17, question: "Which is a volatile memory?", options: ["ROM", "HDD", "RAM", "SSD"], correctAnswer: 2, roundId: "round1" },
+        { order: 18, question: "What does GUI stand for?", options: ["Graphical User Interface", "Global User Interface", "General Unit Interface", "Gaming User Interface"], correctAnswer: 0, roundId: "round1" },
+        { order: 19, question: "Who created Bitcoin?", options: ["Satoshi Nakamoto", "Vitalik Buterin", "Charlie Lee", "Banks"], correctAnswer: 0, roundId: "round1" },
+
+        // 20-30: New & General Tech
+        { order: 20, question: "What does IoT stand for?", options: ["Internet of Things", "Intranet of Technology", "Interconnected Operational Tech", "Input Output Tools"], correctAnswer: 0, roundId: "round1" },
+        { order: 21, question: "Which company owns Github?", options: ["Google", "Facebook", "Microsoft", "Amazon"], correctAnswer: 2, roundId: "round1" },
+        { order: 22, question: "React.js was developed by?", options: ["Google", "Facebook (Meta)", "Twitter", "Apple"], correctAnswer: 1, roundId: "round1" },
+        { order: 23, question: "Linux is which type of OS?", options: ["Proprietary", "Open Source", "Paid", "Closed Source"], correctAnswer: 1, roundId: "round1" },
+        { order: 24, question: "Which device forwards packets between networks?", options: ["Hub", "Switch", "Router", "Modem"], correctAnswer: 2, roundId: "round1" },
+        { order: 25, question: "What allows secure remote login?", options: ["Telnet", "SSH", "FTP", "HTTP"], correctAnswer: 1, roundId: "round1" },
+        { order: 26, question: "Docker is used for?", options: ["Virtualization", "Containerization", "Compilation", "Database"], correctAnswer: 1, roundId: "round1" },
+        { order: 27, question: "Big O notation describes?", options: ["Algorithm Speed", "Algorithm Complexity", "Disk Space", "RAM Size"], correctAnswer: 1, roundId: "round1" },
+        { order: 28, question: "Main component of Android OS?", options: ["C# Kernel", "Linux Kernel", "Windows Kernel", "Java Kernel"], correctAnswer: 1, roundId: "round1" },
+        { order: 29, question: "JSON stands for?", options: ["JavaScript Object Notation", "Java System Object Network", "Java Standard Output Node", "JavaScript Online Network"], correctAnswer: 0, roundId: "round1" },
+        { order: 30, question: "Which tag is used for line break in HTML?", options: ["<lb>", "<br>", "<break>", "<newline>"], correctAnswer: 1, roundId: "round1" },
     ];
 
     const batch = writeBatch(db);

@@ -13,6 +13,7 @@ import {
     getRoundConfig,
     updateRoundConfig,
     saveAttempt,
+    deleteAttempt,
     seedRounds,
     seedQuestions,
     updateUserDoc,

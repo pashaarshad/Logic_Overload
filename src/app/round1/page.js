@@ -62,18 +62,8 @@ export default function Round1Page() {
                 setScore(attempt.score || 0);
                 setStartTime(attempt.startTime);
             } else {
-                // First time — start fresh
-                const now = Date.now();
-                setStartTime(now);
-                await saveAttempt(user.uid, ROUND_ID, {
-                    currentQuestion: 0,
-                    answered: {},
-                    score: 0,
-                    startTime: now,
-                    completed: false,
-                    team: userData?.team || "",
-                    name: userData?.name || "",
-                });
+                // Wait for user to start manually
+                setStartTime(null);
             }
 
             setPageLoading(false);
@@ -81,6 +71,23 @@ export default function Round1Page() {
 
         init();
     }, [user, userData]);
+
+    const handleStartQuiz = async () => {
+        setPageLoading(true);
+        const now = Date.now();
+        setStartTime(now);
+
+        await saveAttempt(user.uid, ROUND_ID, {
+            currentQuestion: 0,
+            answered: {},
+            score: 0,
+            startTime: now,
+            completed: false,
+            team: userData?.team || "",
+            name: userData?.name || "",
+        });
+        setPageLoading(false);
+    };
 
     // Handle answer selection
     const handleAnswer = useCallback(
@@ -127,7 +134,7 @@ export default function Round1Page() {
 
     // Handle time up
     const handleTimeUp = useCallback(async () => {
-        if (completed) return;
+        if (completed || !startTime) return;
         setCompleted(true);
         await saveAttempt(user.uid, ROUND_ID, {
             completed: true,
@@ -149,6 +156,29 @@ export default function Round1Page() {
     if (!user) {
         router.push("/");
         return null;
+    }
+
+    // START SCREEN
+    if (!startTime && !completed) {
+        return (
+            <>
+                <Navbar />
+                <div className="page-center">
+                    <div className="glass-card" style={{ maxWidth: 600, textAlign: "center" }}>
+                        <h1 className="section-title" style={{ fontSize: "2rem", marginBottom: 16 }}>Ready for Round 1?</h1>
+                        <p className="subtitle" style={{ marginBottom: 32 }}>
+                            You have 30 questions and 30 minutes.
+                            The timer will start immediately when you click the button below.
+                            <br /><br />
+                            <span style={{ color: "var(--warning)" }}>⚠️ Do not refresh or close the page once started.</span>
+                        </p>
+                        <button className="btn btn-primary btn-lg" onClick={handleStartQuiz}>
+                            🚀 Start Quiz
+                        </button>
+                    </div>
+                </div>
+            </>
+        );
     }
 
     // COMPLETED — Show results

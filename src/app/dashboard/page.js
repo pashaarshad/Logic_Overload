@@ -108,7 +108,7 @@ export default function DashboardPage() {
 
     const handlePasswordSubmit = (password) => {
         const config = roundConfigs[showPasswordModal.id];
-        if (password === config?.password) {
+        if (password.trim().toLowerCase() === (config?.password || "").trim().toLowerCase()) {
             setShowPasswordModal(null);
             router.push(showPasswordModal.path);
         } else {
