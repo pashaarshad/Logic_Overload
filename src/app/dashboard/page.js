@@ -95,7 +95,8 @@ export default function DashboardPage() {
                         } else if (attempt?.startTime) {
                             statuses[round.id] = "in-progress";
                         } else {
-                            statuses[round.id] = config?.isActive ? "active" : "locked";
+                            // Force unlock all rounds for now as requested
+                            statuses[round.id] = "active";
                         }
                     } catch (innerErr) {
                         console.error(`Failed loading round ${round.id}`, innerErr);
