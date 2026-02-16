@@ -11,100 +11,7 @@ const ROUND_ID = "round3";
 const PROBLEMS = {
     q1: {
         id: "q1",
-        title: "Problem 1: Count Vowels",
-        description: "The code below attempts to count the number of vowels (a, e, i, o, u) in a string. However, there is a syntax/logic error in the condition checking. Find and fix the bug.",
-        expectedOutput: "Input: 'hello world' -> Output: 3 (e, o, o)",
-        type: "debugging",
-        buggyCode: {
-            python: `def count_vowels(s):
-    count = 0
-    vowels = "aeiou"
-    for char in s:
-        # Check if character is a vowel
-        if char in vowels: 
-            # Logic error: Incorrect increment or check? 
-            # Actually, let's use the Assignment Bug as requested
-            pass
-            
-def count_vowels_demo(s):
-    count = 0
-    for char in s:
-        if char = 'a' or char = 'e' or char = 'i' or char = 'o' or char = 'u': # BUG HERE
-            count += 1
-    return count
-
-print(count_vowels_demo("hello world"))`,
-            c: `#include <stdio.h>
-#include <string.h>
-
-int main() {
-    char str[] = "hello world";
-    int count = 0;
-    
-    for(int i=0; i < strlen(str); i++) {
-        char c = str[i];
-        // Check for vowels
-        if(c = 'a' || c = 'e' || c = 'i' || c = 'o' || c = 'u') { // BUG HERE
-            count++;
-        }
-    }
-    
-    printf("%d", count);
-    return 0;
-}`,
-            cpp: `#include <iostream>
-#include <string>
-using namespace std;
-
-int countVowels(string s) {
-    int count = 0;
-    for(char c : s) {
-        // Check for vowels
-        if(c = 'a' || c = 'e' || c = 'i' || c = 'o' || c = 'u') { // BUG HERE
-            count++;
-        }
-    }
-    return count;
-}
-
-int main() {
-    cout << countVowels("hello world");
-    return 0;
-}`,
-            java: `public class Main {
-    public static void main(String[] args) {
-        String str = "hello world";
-        int count = 0;
-        
-        for(int i=0; i<str.length(); i++) {
-            char c = str.charAt(i);
-            // Check for vowels
-            if(c = 'a' || c = 'e' || c = 'i' || c = 'o' || c = 'u') { // BUG HERE
-                count++;
-            }
-        }
-        
-        System.out.println(count);
-    }
-}`,
-            php: `<?php
-function count_vowels($str) {
-    $count = 0;
-    for ($i = 0; $i < strlen($str); $i++) {
-        $c = $str[$i];
-        if ($c = 'a' || $c = 'e' || $c = 'i' || $c = 'o' || $c = 'u') { // BUG HERE
-            $count++;
-        }
-    }
-    return $count;
-}
-echo count_vowels("hello world");
-?>`
-        }
-    },
-    q2: {
-        id: "q2",
-        title: "Problem 2: Factorial Fix",
+        title: "Problem 1: Factorial Fix",
         description: "The code below attempts to calculate the factorial of a number (n!). However, the result is always incorrect due to an initialization error. Find and fix the initialization bug.",
         expectedOutput: "Input: 5 -> Output: 120 (1*2*3*4*5)",
         type: "debugging",
@@ -167,19 +74,58 @@ echo factorial(5);
 ?>`
         }
     },
+    q2: {
+        id: "q2",
+        title: "Problem 2: Two Sum",
+        description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+
+You may assume that each input would have exactly one solution, and you may not use the same element twice.
+You can return the answer in any order.
+
+Example 1:
+Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+
+Example 2:
+Input: nums = [3,2,4], target = 6
+Output: [1,2]
+
+Example 3:
+Input: nums = [3,3], target = 6
+Output: [0,1]
+
+Constraints:
+2 <= nums.length <= 104
+-109 <= nums[i] <= 109
+-109 <= target <= 109
+Only one valid answer exists.`,
+        instruction: "Solve this problem locally using any programming language."
+    },
     q3: {
         id: "q3",
-        title: "Problem 3: Two Sum (LeetCode #1)",
-        description: "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.",
-        link: "https://leetcode.com/problems/two-sum/",
-        instruction: "Solve this problem on LeetCode or your local machine."
-    },
-    q4: {
-        id: "q4",
-        title: "Problem 4: Remove Duplicates (LeetCode #26)",
-        description: "Given an integer array `nums` sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once.",
-        link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
-        instruction: "Solve this problem on LeetCode or your local machine."
+        title: "Problem 3: Remove Duplicates from Sorted Array",
+        description: `Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative order of the elements should be kept the same.
+
+Consider the number of unique elements in nums to be k. After removing duplicates, return the number of unique elements k.
+
+The first k elements of nums should contain the unique numbers in sorted order. The remaining elements beyond index k - 1 can be ignored.
+
+Example 1:
+Input: nums = [1,1,2]
+Output: 2, nums = [1,2,_]
+Explanation: Your function should return k = 2, with the first two elements of nums being 1 and 2 respectively.
+
+Example 2:
+Input: nums = [0,0,1,1,1,2,2,3,3,4]
+Output: 5, nums = [0,1,2,3,4,_,_,_,_,_]
+Explanation: Your function should return k = 5, with the first five elements of nums being 0, 1, 2, 3, and 4 respectively.
+
+Constraints:
+1 <= nums.length <= 3 * 104
+-100 <= nums[i] <= 100
+nums is sorted in non-decreasing order.`,
+        instruction: "Solve this problem locally using any programming language."
     }
 };
 
@@ -189,11 +135,10 @@ export default function Round3Page() {
     const [activeTab, setActiveTab] = useState("q1");
     const [answers, setAnswers] = useState({
         q1: { lang: "python", code: PROBLEMS.q1.buggyCode.python },
-        q2: { lang: "python", code: PROBLEMS.q2.buggyCode.python },
-        q3: "",
-        q4: ""
+        q2: "",
+        q3: ""
     });
-    const [runOutput, setRunOutput] = useState({ q1: null, q2: null });
+    const [runOutput, setRunOutput] = useState({ q1: null });
     const [submitting, setSubmitting] = useState(false);
     const [completed, setCompleted] = useState(false);
 
@@ -206,9 +151,8 @@ export default function Round3Page() {
                 setAnswers(prev => ({
                     ...prev,
                     q1: attempt.q1 || prev.q1,
-                    q2: attempt.q2 || prev.q2,
-                    q3: attempt.q3 || "",
-                    q4: attempt.q4 || ""
+                    q2: attempt.q2 || "",
+                    q3: attempt.q3 || ""
                 }));
             }
         };
@@ -236,20 +180,18 @@ export default function Round3Page() {
             ...prev,
             [qId]: { lang, code: PROBLEMS[qId].buggyCode[lang] }
         }));
-        setRunOutput(prev => ({ ...prev, [qId]: null })); // Reset output
+        setRunOutput(prev => ({ ...prev, [qId]: null }));
     };
 
     const handleCodeChange = (qId, newCode) => {
-        setAnswers(prev => {
-            if (qId === 'q3' || qId === 'q4') {
-                return { ...prev, [qId]: newCode };
-            }
-            return {
+        // Only for Q1 (Debugging)
+        if (qId === 'q1') {
+            setAnswers(prev => ({
                 ...prev,
                 [qId]: { ...prev[qId], code: newCode }
-            };
-        });
-        setRunOutput(prev => ({ ...prev, [qId]: null })); // Reset output check
+            }));
+            setRunOutput(prev => ({ ...prev, [qId]: null }));
+        }
     };
 
     // Client-side mock runner for specific fixes
@@ -259,25 +201,6 @@ export default function Round3Page() {
         let output = "";
 
         if (qId === "q1") {
-            // Check if assignments '=' are replaced with equality '=='
-            // Simplified check: looking for '==' usage instead of '=' inside logic
-            // Or roughly checking if the specific buggy line is fixed
-            if (code.includes("== 'a'") || code.includes("=='a'") || code.includes("== 'e'")) {
-                passed = true;
-            } else if (lang === 'python' && code.includes("in vowels")) {
-                // Heuristic improvement
-                passed = true;
-            }
-
-            // Check if they carelessly left the single '='
-            if (code.includes("= 'a'") || code.includes("='a'")) {
-                passed = false;
-            }
-
-            if (passed) output = "✅ passed! Output: 3";
-            else output = "❌ Error: Syntax/Logic Error. Counts do not match expected.";
-        }
-        else if (qId === "q2") {
             // Factorial: Check initialization
             // Looking for result = 1
             if (code.includes("result = 1") || code.includes("result=1") || code.includes("$result = 1")) {
@@ -382,29 +305,19 @@ export default function Round3Page() {
     const renderManualProblem = (qId) => {
         const problem = PROBLEMS[qId];
         return (
-            <div className="glass-card" style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
-                <h2 style={{ color: "var(--accent-primary)", marginBottom: "15px" }}>{problem.title}</h2>
-                <p style={{ lineHeight: "1.6", whiteSpace: "pre-line", marginBottom: "30px", fontSize: "1.1rem" }}>{problem.description}</p>
-
-                <div style={{ marginBottom: "40px" }}>
-                    <a
-                        href={problem.link}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="btn btn-primary"
-                        style={{ fontSize: "1.2rem", padding: "15px 30px", textDecoration: "none" }}
-                    >
-                        🚀 Solve on LeetCode
-                    </a>
+            <div className="glass-card" style={{ maxWidth: "800px", margin: "0 auto", textAlign: "left" }}>
+                <h2 style={{ color: "var(--accent-primary)", marginBottom: "20px" }}>{problem.title}</h2>
+                <div style={{ lineHeight: "1.7", whiteSpace: "pre-line", marginBottom: "30px", fontSize: "1.05rem", color: "var(--text-primary)" }}>
+                    {problem.description}
                 </div>
 
-                <div style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "8px" }}>
+                <div style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "8px", marginTop: "30px" }}>
                     <h3 style={{ marginBottom: "10px", color: "var(--text-primary)" }}>Instructions</h3>
-                    <p style={{ color: "var(--text-secondary)", marginBottom: "10px" }}>{problem.instruction}</p>
-                    <div style={{ color: "#4caf50", fontWeight: "bold", fontSize: "1.2rem", marginTop: "15px" }}>
+                    <p style={{ color: "var(--text-secondary)", marginBottom: "15px" }}>{problem.instruction}</p>
+                    <div style={{ color: "#4caf50", fontWeight: "bold", fontSize: "1.2rem" }}>
                         🏆 Reward: 500 Marks
                     </div>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "10px", opacity: 0.8 }}>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "5px", opacity: 0.8 }}>
                         (Verification will be done manually by Admins. Please maximize your score!)
                     </p>
                 </div>
@@ -447,9 +360,8 @@ export default function Round3Page() {
 
                 {/* Content */}
                 {activeTab === 'q1' && renderDebugger('q1')}
-                {activeTab === 'q2' && renderDebugger('q2')}
+                {activeTab === 'q2' && renderManualProblem('q2')}
                 {activeTab === 'q3' && renderManualProblem('q3')}
-                {activeTab === 'q4' && renderManualProblem('q4')}
             </div>
         </div>
     );
