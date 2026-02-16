@@ -40,7 +40,7 @@ export default function Round2Page() {
                         </div>
 
                         <div style={{ marginBottom: "30px" }}>
-                            <h3 style={{ marginBottom: "10px", color: "var(--text-primary)" }}>🚀 Advanced Task (10 Marks)</h3>
+                            <h3 style={{ marginBottom: "10px", color: "var(--text-primary)" }}>🚀 Advanced Task ( 5 Marks + Base Task)</h3>
                             <p style={{ marginBottom: "10px", color: "var(--text-secondary)" }}>To achieve full marks, implement the following:</p>
                             <ul style={{ listStyle: "disc", paddingLeft: "20px", lineHeight: "1.8", color: "var(--text-secondary)" }}>
                                 <li>Create separate HTML files for <b>Home</b>, <b>About</b>, <b>Services</b>, and <b>Contact</b> pages.</li>
@@ -48,6 +48,18 @@ export default function Round2Page() {
                                 <li>Add <b>Hover Effects</b> and <b>Animations</b> to the navigation buttons/links for a polished UI.</li>
                                 <li>Ensure separate files are used and linked correctly.</li>
                                 <li>Focus on good structure, color usage, and visual appeal.</li>
+                            </ul>
+                        </div>
+
+                        <div style={{ marginBottom: "20px", background: "rgba(220, 53, 69, 0.1)", border: "1px solid #dc3545", padding: "15px", borderRadius: "8px", color: "#dc3545" }}>
+                            <h3 style={{ marginBottom: "10px", color: "#dc3545", display: "flex", alignItems: "center", gap: "8px", fontSize: "1.1rem" }}>
+                                ⚠️ Strict Rules
+                            </h3>
+                            <ul style={{ listStyle: "disc", paddingLeft: "20px", lineHeight: "1.6" }}>
+                                <li>You <b>cannot</b> use any online tools.</li>
+                                <li>You must do <b>manual coding</b> only.</li>
+                                <li><b>No use of any AI tools.</b></li>
+                                <li>If you use AI/online tools, you will get <b>-10 marks</b> and will be <b>disqualified</b> if caught with 100% proof.</li>
                             </ul>
                         </div>
 
@@ -73,9 +85,12 @@ export default function Round2Page() {
                                 style={{ width: "100%", height: "auto", display: "block" }}
                             />
                         </div>
-                        <div style={{ textAlign: "center" }}>
+                        <div style={{ textAlign: "center", display: "flex", gap: "10px", justifyContent: "center" }}>
                             <a href="/round2.png" download className="btn btn-primary">
-                                ⬇️ Download Reference Image
+                                ⬇️ Download
+                            </a>
+                            <a href="/round2.png" target="_blank" className="btn btn-secondary">
+                                👁️ Preview
                             </a>
                         </div>
                     </div>
