@@ -11,13 +11,14 @@ const ROUND_ID = "round3";
 const PROBLEMS = {
     q1: {
         id: "q1",
-        title: "Problem 1: Factorial Fix",
-        description: "The code below attempts to calculate the factorial of a number (n!). However, the result is always incorrect due to an initialization error. Find and fix the initialization bug.",
+        title: "Problem 1: Factorial Fix (5 Marks)",
+        description: "The code below attempts to calculate the factorial of a number (n!). However, the result is incorrect. debug the code to make it work correctly.",
+        hint: "You don't need to change all the lines. Focus on the most important part (initialization/logic).",
         expectedOutput: "Input: 5 -> Output: 120 (1*2*3*4*5)",
         type: "debugging",
         buggyCode: {
             python: `def factorial(n):
-    result = 0 # BUG HERE: Initialization
+    result = 0 
     for i in range(1, n + 1):
         result *= i
     return result
@@ -27,7 +28,7 @@ print(factorial(5))`,
 
 int main() {
     int n = 5;
-    int result = 0; // BUG HERE: Initialization
+    int result = 0;
     
     for(int i=1; i<=n; i++) {
         result *= i;
@@ -41,7 +42,7 @@ using namespace std;
 
 int main() {
     int n = 5;
-    int result = 0; // BUG HERE: Initialization
+    int result = 0;
     
     for(int i=1; i<=n; i++) {
         result *= i;
@@ -53,7 +54,7 @@ int main() {
             java: `public class Main {
     public static void main(String[] args) {
         int n = 5;
-        int result = 0; // BUG HERE: Initialization
+        int result = 0;
         
         for(int i=1; i<=n; i++) {
             result *= i;
@@ -64,7 +65,7 @@ int main() {
 }`,
             php: `<?php
 function factorial($n) {
-    $result = 0; // BUG HERE: Initialization
+    $result = 0;
     for ($i = 1; $i <= $n; $i++) {
         $result *= $i;
     }
@@ -76,56 +77,42 @@ echo factorial(5);
     },
     q2: {
         id: "q2",
-        title: "Problem 2: Two Sum",
-        description: `Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.
+        title: "Problem 2: Pattern Design (5 Marks)",
+        description: `Write a program to print the following pattern exactly as shown below for N lines (e.g., N=4).
+The pattern involves a mixture of hashes (#) and numbers.
 
-You may assume that each input would have exactly one solution, and you may not use the same element twice.
-You can return the answer in any order.
+Pattern for N=4:
+#
+# 1
+# 1 #
+# 1 # 2
 
-Example 1:
-Input: nums = [2,7,11,15], target = 9
-Output: [0,1]
-Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].
+Logic:
+Row 1: #
+Row 2: # 1
+Row 3: # 1 #
+Row 4: # 1 # 2
 
-Example 2:
-Input: nums = [3,2,4], target = 6
-Output: [1,2]
-
-Example 3:
-Input: nums = [3,3], target = 6
-Output: [0,1]
-
-Constraints:
-2 <= nums.length <= 104
--109 <= nums[i] <= 109
--109 <= target <= 109
-Only one valid answer exists.`,
-        instruction: "Solve this problem locally using any programming language."
+(Alternating sequence starting with #)`,
+        instruction: "Solve this problem locally and paste your code below.",
+        pattern: `#
+# 1
+# 1 #
+# 1 # 2`
     },
     q3: {
         id: "q3",
-        title: "Problem 3: Remove Duplicates from Sorted Array",
+        title: "Problem 3: Remove Duplicates (5 Marks)",
         description: `Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative order of the elements should be kept the same.
-
-Consider the number of unique elements in nums to be k. After removing duplicates, return the number of unique elements k.
-
-The first k elements of nums should contain the unique numbers in sorted order. The remaining elements beyond index k - 1 can be ignored.
 
 Example 1:
 Input: nums = [1,1,2]
 Output: 2, nums = [1,2,_]
-Explanation: Your function should return k = 2, with the first two elements of nums being 1 and 2 respectively.
 
 Example 2:
 Input: nums = [0,0,1,1,1,2,2,3,3,4]
-Output: 5, nums = [0,1,2,3,4,_,_,_,_,_]
-Explanation: Your function should return k = 5, with the first five elements of nums being 0, 1, 2, 3, and 4 respectively.
-
-Constraints:
-1 <= nums.length <= 3 * 104
--100 <= nums[i] <= 100
-nums is sorted in non-decreasing order.`,
-        instruction: "Solve this problem locally using any programming language."
+Output: 5, nums = [0,1,2,3,4,_,_,_,_,_]`,
+        instruction: "Solve this problem locally and paste your code below."
     }
 };
 
@@ -142,6 +129,10 @@ export default function Round3Page() {
     const [submitting, setSubmitting] = useState(false);
     const [completed, setCompleted] = useState(false);
 
+    // Timer for Q1 (5 Minutes)
+    const [q1timeLeft, setQ1TimeLeft] = useState(300);
+    const [isQ2Unlocked, setIsQ2Unlocked] = useState(false);
+
     useEffect(() => {
         if (!user) return;
         const init = async () => {
@@ -154,10 +145,31 @@ export default function Round3Page() {
                     q2: attempt.q2 || "",
                     q3: attempt.q3 || ""
                 }));
+
+                // If checking reload, maybe unlock if time passed? 
+                // For now, simpler to just start timer or rely on saved state if we tracked start time.
+                // Assuming session reset on reload for timer or just 5 min per view.
             }
         };
         init();
     }, [user]);
+
+    useEffect(() => {
+        if (q1timeLeft > 0) {
+            const timer = setInterval(() => {
+                setQ1TimeLeft(prev => prev - 1);
+            }, 1000);
+            return () => clearInterval(timer);
+        } else {
+            setIsQ2Unlocked(true);
+        }
+    }, [q1timeLeft]);
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    };
 
     const handleSave = async (isComplete = false) => {
         if (!user) return;
@@ -184,17 +196,18 @@ export default function Round3Page() {
     };
 
     const handleCodeChange = (qId, newCode) => {
-        // Only for Q1 (Debugging)
         if (qId === 'q1') {
             setAnswers(prev => ({
                 ...prev,
                 [qId]: { ...prev[qId], code: newCode }
             }));
             setRunOutput(prev => ({ ...prev, [qId]: null }));
+        } else {
+            setAnswers(prev => ({ ...prev, [qId]: newCode }));
         }
     };
 
-    // Client-side mock runner for specific fixes
+    // Client-side mock runner for Q1
     const handleRunCode = (qId) => {
         const { lang, code } = answers[qId];
         let passed = false;
@@ -202,10 +215,11 @@ export default function Round3Page() {
 
         if (qId === "q1") {
             // Factorial: Check initialization
-            // Looking for result = 1
             if (code.includes("result = 1") || code.includes("result=1") || code.includes("$result = 1")) {
                 passed = true;
                 output = "✅ Passed! Output: 120";
+                // Optionally auto-unlock Q2 if Q1 is solved?
+                // setIsQ2Unlocked(true); 
             } else {
                 passed = false;
                 output = "❌ Error: Output is 0. Check your initialization.";
@@ -224,7 +238,7 @@ export default function Round3Page() {
                 <Navbar />
                 <div className="container" style={{ textAlign: "center", padding: "100px 20px" }}>
                     <h1 className="section-title">Round 3 Submitted!</h1>
-                    <p className="subtitle">Your solutions have been recorded. Great job tackling those Data Structures & Algorithms!</p>
+                    <p className="subtitle">Your solutions have been recorded. Great job!</p>
                     <button className="btn btn-primary" onClick={() => router.push("/dashboard")}>Back to Dashboard</button>
                 </div>
             </div>
@@ -243,13 +257,13 @@ export default function Round3Page() {
                     <h2 style={{ color: "var(--accent-primary)", marginBottom: "15px" }}>{problem.title}</h2>
                     <p style={{ lineHeight: "1.6", whiteSpace: "pre-line", marginBottom: "20px" }}>{problem.description}</p>
 
+                    <div style={{ background: "rgba(0,188,212,0.1)", borderLeft: "4px solid #00bcd4", padding: "15px", marginBottom: "20px", fontStyle: "italic", color: "#e0f7fa" }}>
+                        <strong>Hint:</strong> {problem.hint}
+                    </div>
+
                     <div style={{ background: "rgba(0,0,0,0.2)", padding: "15px", borderRadius: "8px", marginBottom: "20px" }}>
                         <h4 style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>Expected Output:</h4>
                         <pre style={{ margin: 0, fontFamily: "monospace", color: "#4caf50" }}>{problem.expectedOutput}</pre>
-                    </div>
-
-                    <div style={{ background: "rgba(255, 193, 7, 0.1)", border: "1px solid #ffc107", padding: "10px", borderRadius: "8px", color: "#e0a800" }}>
-                        <strong>Wait!</strong> Select your preferred language on the right before fixing the code.
                     </div>
                 </div>
 
@@ -304,6 +318,18 @@ export default function Round3Page() {
 
     const renderManualProblem = (qId) => {
         const problem = PROBLEMS[qId];
+        if (!isQ2Unlocked) {
+            return (
+                <div style={{ textAlign: "center", padding: "50px", color: "var(--text-secondary)" }}>
+                    <h2>🔒 Locked</h2>
+                    <p>Please focus on Problem 1 for the first 5 minutes.</p>
+                    <p style={{ fontSize: "1.5rem", marginTop: "20px", fontWeight: "bold", color: "var(--accent-primary)" }}>
+                        Unlocks in {formatTime(q1timeLeft)}
+                    </p>
+                </div>
+            );
+        }
+
         return (
             <div className="glass-card" style={{ maxWidth: "800px", margin: "0 auto", textAlign: "left" }}>
                 <h2 style={{ color: "var(--accent-primary)", marginBottom: "20px" }}>{problem.title}</h2>
@@ -311,15 +337,35 @@ export default function Round3Page() {
                     {problem.description}
                 </div>
 
+                {problem.pattern && (
+                    <div style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "8px", marginBottom: "20px", textAlign: "left" }}>
+                        <pre style={{ margin: 0, fontFamily: "monospace", color: "var(--text-primary)", fontSize: "1.2rem", lineHeight: "1.5" }}>{problem.pattern}</pre>
+                    </div>
+                )}
+
                 <div style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "8px", marginTop: "30px" }}>
                     <h3 style={{ marginBottom: "10px", color: "var(--text-primary)" }}>Instructions</h3>
                     <p style={{ color: "var(--text-secondary)", marginBottom: "15px" }}>{problem.instruction}</p>
-                    <div style={{ color: "#4caf50", fontWeight: "bold", fontSize: "1.2rem" }}>
-                        🏆 Reward: 500 Marks
+
+                    <div style={{ display: "flex", flexDirection: "column" }}>
+                        <label style={{ marginBottom: "5px", fontWeight: "bold" }}>Your Solution Code:</label>
+                        <textarea
+                            value={answers[qId]}
+                            onChange={(e) => handleCodeChange(qId, e.target.value)}
+                            placeholder="// Paste your code here..."
+                            style={{
+                                padding: "15px", minHeight: "300px",
+                                background: "var(--bg-primary)", color: "var(--text-primary)",
+                                border: "1px solid var(--border)", borderRadius: "8px",
+                                fontFamily: "monospace", resize: "vertical"
+                            }}
+                            spellCheck="false"
+                        />
                     </div>
-                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "5px", opacity: 0.8 }}>
-                        (Verification will be done manually by Admins. Please maximize your score!)
-                    </p>
+
+                    <div style={{ color: "#4caf50", fontWeight: "bold", fontSize: "1.2rem", marginTop: "20px" }}>
+                        🏆 Reward: 5 Marks
+                    </div>
                 </div>
             </div>
         );
@@ -331,7 +377,14 @@ export default function Round3Page() {
             <div style={{ padding: "20px" }}>
                 {/* Header & Tabs */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                    <h1 className="section-title" style={{ margin: 0, fontSize: "1.8rem" }}>Round 3: DSA Challenge</h1>
+                    <div>
+                        <h1 className="section-title" style={{ margin: 0, fontSize: "1.8rem" }}>Round 3: DSA Challenge</h1>
+                        {!isQ2Unlocked && (
+                            <span style={{ color: "var(--accent-primary)", fontSize: "0.9rem", marginLeft: "10px" }}>
+                                ⏱️ Next problems unlock in: {formatTime(q1timeLeft)}
+                            </span>
+                        )}
+                    </div>
                     <div style={{ display: "flex", gap: "10px" }}>
                         <button className="btn btn-secondary" onClick={() => handleSave(false)}>Save Progress</button>
                         <button className="btn btn-success" onClick={() => handleSave(true)} disabled={submitting}>
@@ -350,10 +403,11 @@ export default function Round3Page() {
                                 background: activeTab === qId ? "var(--accent-primary)" : "transparent",
                                 color: activeTab === qId ? "white" : "var(--text-secondary)",
                                 border: "none", borderTopLeftRadius: "8px", borderTopRightRadius: "8px",
-                                cursor: "pointer", fontWeight: "bold", transition: "0.2s"
+                                cursor: "pointer", fontWeight: "bold", transition: "0.2s",
+                                opacity: (!isQ2Unlocked && qId !== 'q1') ? 0.5 : 1
                             }}
                         >
-                            {PROBLEMS[qId].title}
+                            {PROBLEMS[qId].title} {(!isQ2Unlocked && qId !== 'q1') && "🔒"}
                         </button>
                     ))}
                 </div>
