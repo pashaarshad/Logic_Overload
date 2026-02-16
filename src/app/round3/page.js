@@ -49,6 +49,7 @@ export default function Round3Page() {
     }, [user, userData]);
 
     const handleComplete = async () => {
+        if (!user) return;
         await saveAttempt(user.uid, ROUND_ID, {
             completed: true,
             endTime: Date.now(),

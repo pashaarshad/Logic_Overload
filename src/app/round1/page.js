@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import Timer from "@/components/Timer";
 import AntiCheat from "@/components/AntiCheat";
-import { getQuestions, getAttempt, saveAttempt, getRoundConfig } from "@/lib/firestore";
+import { getQuestions, getAttempt, saveAttempt, getRoundConfig, seedQuestions } from "@/lib/firestore";
 
 const ROUND_ID = "round1";
 
@@ -39,7 +39,15 @@ export default function Round1Page() {
             }
 
             // Get questions
-            const qs = await getQuestions(ROUND_ID);
+            let qs = await getQuestions(ROUND_ID);
+            if (!qs || qs.length === 0) {
+                try {
+                    await seedQuestions();
+                    qs = await getQuestions(ROUND_ID);
+                } catch (err) {
+                    console.error("Auto-seed failed", err);
+                }
+            }
             setQuestions(qs);
 
             // Check existing attempt
@@ -73,6 +81,7 @@ export default function Round1Page() {
     }, [user, userData]);
 
     const handleStartQuiz = async () => {
+        if (!user) return;
         setPageLoading(true);
         const now = Date.now();
         setStartTime(now);
@@ -92,7 +101,7 @@ export default function Round1Page() {
     // Handle answer selection
     const handleAnswer = useCallback(
         async (optionIndex) => {
-            if (showFeedback || !questions[currentQ]) return;
+            if (!user || showFeedback || !questions[currentQ]) return;
 
             const question = questions[currentQ];
             const isCorrect = optionIndex === question.correctAnswer;
@@ -134,7 +143,7 @@ export default function Round1Page() {
 
     // Handle time up
     const handleTimeUp = useCallback(async () => {
-        if (completed || !startTime) return;
+        if (!user || completed || !startTime) return;
         setCompleted(true);
         await saveAttempt(user.uid, ROUND_ID, {
             completed: true,
