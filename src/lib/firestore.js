@@ -59,9 +59,11 @@ export async function updateRoundConfig(roundId, data) {
 
 export async function getQuestions(roundId) {
     const snap = await getDocs(
-        query(collection(db, "questions"), where("roundId", "==", roundId), orderBy("order", "asc"))
+        query(collection(db, "questions"), where("roundId", "==", roundId))
     );
-    return snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    const questions = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    // Client-side sort to avoid requiring a composite index
+    return questions.sort((a, b) => (a.order || 0) - (b.order || 0));
 }
 
 export async function setQuestion(questionId, data) {
