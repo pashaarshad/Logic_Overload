@@ -122,7 +122,11 @@ export default function Leaderboard({ limit = null, minimal = false }) {
                             <td><span className="navbar-team">{row.team}</span></td>
                             <td style={{ fontWeight: 600 }}>{row.name}</td>
                             {!minimal && ROUNDS.map((r) => (
-                                <td key={r} style={{ fontFamily: "var(--font-mono)" }}>
+                                <td
+                                    key={r}
+                                    style={{ fontFamily: "var(--font-mono)", cursor: "help" }}
+                                    title={row.scores[r]?.time ? `Time: ${formatTime(row.scores[r].time)}` : "Not completed"}
+                                >
                                     {row.scores[r]?.score !== null ? row.scores[r].score : "—"}
                                 </td>
                             ))}
