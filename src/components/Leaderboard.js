@@ -11,6 +11,20 @@ export default function Leaderboard({ limit = null, minimal = false }) {
 
     useEffect(() => {
         const loadLeaderboard = async () => {
+            // 1. Try to load from cache immediately
+            const cached = localStorage.getItem("leaderboardData");
+            if (cached) {
+                try {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        setLeaderboard(limit ? parsed.slice(0, limit) : parsed);
+                        setLoading(false); // Show cached data while fetching
+                    }
+                } catch (e) {
+                    console.warn("Invalid leaderboard cache");
+                }
+            }
+
             try {
                 const users = await getAllUsers();
                 const attempts = await getAllAttempts();
@@ -22,42 +36,44 @@ export default function Leaderboard({ limit = null, minimal = false }) {
                 });
 
                 // Build leaderboard rows
-                const rows = users
-                    .map((u) => {
-                        const scores = {};
-                        let totalScore = 0;
-                        let totalTime = 0;
+                const rows = users.map((u) => {
+                    const scores = {};
+                    let totalScore = 0;
+                    let totalTime = 0;
 
-                        ROUNDS.forEach((roundId) => {
-                            const attempt = attemptMap[`${u.id}_${roundId}`];
-                            // Prioritize admin manually entered score over auto-score
-                            const roundScore = attempt?.adminScore ?? attempt?.score ?? null;
-                            const roundTime = attempt?.timeTaken ?? null;
+                    ROUNDS.forEach((roundId) => {
+                        const attempt = attemptMap[`${u.id}_${roundId}`];
+                        // Prioritize admin manually entered score over auto-score
+                        const roundScore = attempt?.adminScore ?? attempt?.score ?? null;
+                        const roundTime = attempt?.timeTaken ?? null;
 
-                            scores[roundId] = {
-                                score: roundScore,
-                                time: roundTime,
-                            };
-
-                            if (roundScore !== null) totalScore += roundScore;
-                            if (roundTime !== null) totalTime += roundTime;
-                        });
-
-                        return {
-                            uid: u.id,
-                            name: u.name || "Participant",
-                            team: u.team,
-                            scores,
-                            totalScore,
-                            totalTime,
+                        scores[roundId] = {
+                            score: roundScore,
+                            time: roundTime,
                         };
+
+                        if (roundScore !== null) totalScore += roundScore;
+                        if (roundTime !== null) totalTime += roundTime;
                     });
+
+                    return {
+                        uid: u.id,
+                        name: u.name || "Participant",
+                        team: u.team,
+                        scores,
+                        totalScore,
+                        totalTime,
+                    };
+                });
 
                 // Sort: highest score first, then lowest time
                 rows.sort((a, b) => {
                     if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
                     return a.totalTime - b.totalTime;
                 });
+
+                // Cache the full fresh list
+                localStorage.setItem("leaderboardData", JSON.stringify(rows));
 
                 if (limit) {
                     setLeaderboard(rows.slice(0, limit));

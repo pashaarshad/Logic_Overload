@@ -65,26 +65,47 @@ export default function DashboardPage() {
         const uid = user.uid;
 
         const loadData = async () => {
+            // 1. Load cached configs for instant rendering
+            const cachedConfigs = localStorage.getItem("roundConfigs");
+            if (cachedConfigs) {
+                try {
+                    const parsed = JSON.parse(cachedConfigs);
+                    if (parsed && typeof parsed === "object") {
+                        setRoundConfigs(parsed);
+                    }
+                } catch (e) { }
+            }
+
             try {
                 const configs = {};
                 const statuses = {};
 
-                for (const round of ROUND_INFO) {
-                    const config = await getRoundConfig(round.id);
-                    configs[round.id] = config;
+                // Parallelize all requests
+                await Promise.all(ROUND_INFO.map(async (round) => {
+                    try {
+                        const [config, attempt] = await Promise.all([
+                            getRoundConfig(round.id),
+                            getAttempt(uid, round.id)
+                        ]);
 
-                    const attempt = await getAttempt(uid, round.id);
-                    if (attempt?.completed) {
-                        statuses[round.id] = "completed";
-                    } else if (attempt?.startTime) {
-                        statuses[round.id] = "in-progress";
-                    } else {
-                        statuses[round.id] = config?.isActive ? "active" : "locked";
+                        configs[round.id] = config || { isActive: false };
+
+                        if (attempt?.completed) {
+                            statuses[round.id] = "completed";
+                        } else if (attempt?.startTime) {
+                            statuses[round.id] = "in-progress";
+                        } else {
+                            statuses[round.id] = config?.isActive ? "active" : "locked";
+                        }
+                    } catch (innerErr) {
+                        console.error(`Failed loading round ${round.id}`, innerErr);
                     }
-                }
+                }));
 
+                // Update state and cache
                 setRoundConfigs(configs);
                 setRoundStatuses(statuses);
+                localStorage.setItem("roundConfigs", JSON.stringify(configs));
             } catch (err) {
                 console.error("Dashboard load error:", err);
             }

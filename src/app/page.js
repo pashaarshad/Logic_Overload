@@ -40,56 +40,6 @@ export default function LoginPage() {
     setAuthLoading(false);
   };
 
-  const handleEmailLogin = async (e) => {
-    e.preventDefault();
-    if (!email || !password) {
-      setError("Please enter email and password");
-      return;
-    }
-    setError("");
-    setAuthLoading(true);
-    try {
-      await signInWithEmail(email, password);
-    } catch (err) {
-      setError(err.message || "Login failed");
-    }
-    setAuthLoading(false);
-  };
-
-  // Helper to create or upgrade default admin
-  const createDefaultAdmin = async () => {
-    const adminEmail = "arshad@logic.com";
-    const adminPass = "logic65";
-    setAuthLoading(true);
-    setMessage("Setting up admin...");
-
-    try {
-      // 1. Try to create user
-      let userCred;
-      try {
-        userCred = await firebaseCreateUser(auth, adminEmail, adminPass);
-      } catch (createErr) {
-        if (createErr.code === "auth/email-already-in-use") {
-          // 2. If exists, try to login
-          userCred = await signInWithEmail(adminEmail, adminPass);
-        } else {
-          throw createErr;
-        }
-      }
-
-      // 3. Set admin role
-      const user = userCred.user || userCred;
-      if (user?.uid) {
-        await updateUserDoc(user.uid, { role: "admin", name: "Arshad Admin" });
-        setMessage(`✅ Admin setup complete. Redirecting...`);
-        // Redirect handled by useEffect
-      }
-    } catch (err) {
-      setError("Setup failed: " + err.message);
-      setAuthLoading(false);
-    }
-  };
-
   if (loading) {
     return (
       <div className="page-center">
@@ -101,37 +51,34 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="page-center" style={{ minHeight: "100vh", padding: "40px 20px", flexDirection: "column", gap: 40 }}>
+    <div className="page-center" style={{ minHeight: "100vh", padding: "40px 20px" }}>
       {/* Container for Login & Leaderboard */}
       <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 40, width: "100%", maxWidth: 1200 }}>
 
         {/* Login Section */}
-        <div className="login-container glass-card" style={{ flex: "1 1 400px", maxWidth: 450, height: "fit-content" }}>
+        <div className="login-container glass-card" style={{ flex: "1 1 350px", maxWidth: 400, height: "fit-content", padding: "40px" }}>
           {/* Logo */}
           <div style={{ textAlign: "center", marginBottom: 36 }}>
-            {/* Using the logo image as requested */}
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 16 }}>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
               <img
                 src="/logo.jpeg"
-                alt="Logic Overload Logo"
+                alt="Logic Overload"
                 style={{ height: 120, objectFit: "contain", borderRadius: 16, boxShadow: "0 8px 32px rgba(0,0,0,0.3)" }}
-                onError={(e) => { e.target.onerror = null; e.target.src = ""; e.target.style.display = "none"; }}
+                onError={(e) => { e.target.style.display = "none"; }}
               />
             </div>
-            {/* Fallback title if logo fails to load or text preferred */}
-            <h1 className="hero-title" style={{ fontSize: "2rem", marginBottom: 8, display: "none" }}>
-              Logic Overload
-            </h1>
+            <h1 className="hero-title" style={{ fontSize: "2rem", marginBottom: 8, display: "none" }}>Logic Overload</h1>
             <p className="subtitle">Technical Coding Event</p>
           </div>
 
-          {/* Google Sign-In */}
+          {/* Google Sign-In Only */}
           <button
             className="btn btn-google btn-full btn-lg"
             onClick={handleGoogleLogin}
             disabled={authLoading}
+            style={{ marginBottom: 20 }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24">
+            <svg width="24" height="24" viewBox="0 0 24 24" style={{ marginRight: 12 }}>
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -140,51 +87,10 @@ export default function LoginPage() {
             {authLoading ? "Signing in..." : "Sign in with Google"}
           </button>
 
-          <div className="login-divider">or</div>
+          {error && <div className="feedback wrong" style={{ textAlign: "center" }}>{error}</div>}
 
-          {/* Email/Password Login */}
-          <form onSubmit={handleEmailLogin}>
-            <div className="input-group" style={{ marginBottom: 12 }}>
-              <label>Email</label>
-              <input
-                type="email"
-                className="input"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="input-group" style={{ marginBottom: 20 }}>
-              <label>Password</label>
-              <input
-                type="password"
-                className="input"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <button
-              type="submit"
-              className="btn btn-primary btn-full"
-              disabled={authLoading}
-            >
-              {authLoading ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
-
-          {error && <div className="feedback wrong" style={{ marginTop: 16, textAlign: "center" }}>{error}</div>}
-          {message && <div className="feedback correct" style={{ marginTop: 16, textAlign: "center" }}>{message}</div>}
-
-          {/* Setup Admin Button (Hidden/Subtle) */}
-          <div style={{ marginTop: 32, textAlign: "center" }}>
-            <span
-              onClick={createDefaultAdmin}
-              style={{ fontSize: "0.8rem", color: "var(--text-secondary)", cursor: "pointer", opacity: 0.5 }}
-              title="Create default admin (arshad@logic.com / logic65)"
-            >
-              ⚙️ Initialize Admin
-            </span>
+          <div style={{ marginTop: 24, textAlign: "center", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+            Please enable popups if login window doesn't appear.
           </div>
         </div>
 
@@ -193,9 +99,6 @@ export default function LoginPage() {
           <div className="glass-card" style={{ height: "100%", maxHeight: "800px", display: "flex", flexDirection: "column" }}>
             <h2 className="section-title" style={{ marginBottom: 16, textAlign: "center" }}>🏆 Live Leaderboard</h2>
             <Leaderboard minimal={true} limit={15} />
-            <div style={{ textAlign: "center", marginTop: 16, fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-              Top 15 Teams shown. Login to see full details.
-            </div>
           </div>
         </div>
 
