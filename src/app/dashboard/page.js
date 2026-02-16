@@ -61,28 +61,33 @@ export default function DashboardPage() {
 
     // Load round configs and attempt statuses
     useEffect(() => {
-        if (!user) return;
+        if (!user?.uid) return;
+        const uid = user.uid;
 
         const loadData = async () => {
-            const configs = {};
-            const statuses = {};
+            try {
+                const configs = {};
+                const statuses = {};
 
-            for (const round of ROUND_INFO) {
-                const config = await getRoundConfig(round.id);
-                configs[round.id] = config;
+                for (const round of ROUND_INFO) {
+                    const config = await getRoundConfig(round.id);
+                    configs[round.id] = config;
 
-                const attempt = await getAttempt(user.uid, round.id);
-                if (attempt?.completed) {
-                    statuses[round.id] = "completed";
-                } else if (attempt?.startTime) {
-                    statuses[round.id] = "in-progress";
-                } else {
-                    statuses[round.id] = config?.isActive ? "active" : "locked";
+                    const attempt = await getAttempt(uid, round.id);
+                    if (attempt?.completed) {
+                        statuses[round.id] = "completed";
+                    } else if (attempt?.startTime) {
+                        statuses[round.id] = "in-progress";
+                    } else {
+                        statuses[round.id] = config?.isActive ? "active" : "locked";
+                    }
                 }
-            }
 
-            setRoundConfigs(configs);
-            setRoundStatuses(statuses);
+                setRoundConfigs(configs);
+                setRoundStatuses(statuses);
+            } catch (err) {
+                console.error("Dashboard load error:", err);
+            }
         };
 
         loadData();
@@ -161,10 +166,10 @@ export default function DashboardPage() {
                                 <div className="round-desc">{round.desc}</div>
                                 <div
                                     className={`round-status ${status === "completed"
-                                            ? "status-completed"
-                                            : status === "active" || status === "in-progress"
-                                                ? "status-active"
-                                                : "status-locked"
+                                        ? "status-completed"
+                                        : status === "active" || status === "in-progress"
+                                            ? "status-active"
+                                            : "status-locked"
                                         }`}
                                 >
                                     {status === "completed"

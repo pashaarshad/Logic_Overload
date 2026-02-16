@@ -338,7 +338,7 @@ export default function AdminPage() {
                                                             <td style={{ fontWeight: 600 }}>{u.name}</td>
                                                             {ROUNDS.map((roundId) => {
                                                                 const attempt = attemptMap[`${u.id}_${roundId}`];
-                                                                const score = attempt?.score ?? attempt?.adminScore ?? "";
+                                                                const score = attempt?.adminScore ?? attempt?.score ?? "";
                                                                 if (score !== "") total += parseInt(score) || 0;
 
                                                                 return (
