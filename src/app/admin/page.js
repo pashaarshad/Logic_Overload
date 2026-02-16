@@ -40,6 +40,7 @@ export default function AdminPage() {
     const [pageLoading, setPageLoading] = useState(true);
     const [editingQuestion, setEditingQuestion] = useState(null);
     const [viewSubmission, setViewSubmission] = useState(null);
+    const [viewDetails, setViewDetails] = useState(null); // New state for details modal
     const [message, setMessage] = useState("");
 
 
@@ -232,6 +233,7 @@ export default function AdminPage() {
                     </div>
                     {[
                         { id: "participants", icon: "👥", label: "Participants" },
+                        { id: "admins", icon: "🛡️", label: "Admins" }, // New tab
                         { id: "rounds", icon: "🔧", label: "Round Settings" },
                         { id: "questions", icon: "📝", label: "Questions" },
                         { id: "scores", icon: "📊", label: "Scores & Marks" },
@@ -279,7 +281,7 @@ export default function AdminPage() {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {users.map((u, i) => (
+                                                {users.filter(u => u.role !== "admin").map((u, i) => (
                                                     <tr key={u.id}>
                                                         <td>{i + 1}</td>
                                                         <td><span className="navbar-team">{u.team}</span></td>
@@ -298,6 +300,13 @@ export default function AdminPage() {
                                                         <td>
                                                             <button className="btn btn-sm btn-secondary" onClick={() => handleToggleAdmin(u.id, u.role)}>
                                                                 {u.role === "admin" ? "Remove Admin" : "Make Admin"}
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-sm btn-primary"
+                                                                style={{ marginLeft: 8 }}
+                                                                onClick={() => setViewDetails(u)}
+                                                            >
+                                                                📄 Details
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -517,6 +526,52 @@ export default function AdminPage() {
                                     </div>
                                 </div>
                             )}
+                            {/* ─── Admins Tab ─── */}
+                            {activeTab === "admins" && (
+                                <div>
+                                    <h2 className="section-title" style={{ marginBottom: 24 }}>
+                                        🛡️ Admins ({users.filter(u => u.role === "admin").length})
+                                    </h2>
+                                    <div className="glass-card" style={{ padding: 0, overflow: "auto" }}>
+                                        <table className="data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Name</th>
+                                                    <th>Email</th>
+                                                    <th>Role</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {users.filter(u => u.role === "admin").map((u, i) => (
+                                                    <tr key={u.id}>
+                                                        <td>{i + 1}</td>
+                                                        <td style={{ fontWeight: 600 }}>{u.name}</td>
+                                                        <td style={{ color: "var(--text-secondary)" }}>{u.email}</td>
+                                                        <td>
+                                                            <span style={{
+                                                                padding: "4px 10px", borderRadius: "12px",
+                                                                fontSize: "0.8rem", fontWeight: 600,
+                                                                background: "rgba(108, 92, 231, 0.1)",
+                                                                color: "var(--accent-primary)",
+                                                            }}>
+                                                                {u.role}
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <button className="btn btn-sm btn-danger" onClick={() => handleToggleAdmin(u.id, u.role)}>
+                                                                Remove Admin role
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
                         </>
                     )}
                 </main>
@@ -527,9 +582,49 @@ export default function AdminPage() {
                         onClose={() => setViewSubmission(null)}
                     />
                 )}
+
+                {viewDetails && (
+                    <DetailsModal
+                        user={viewDetails}
+                        onClose={() => setViewDetails(null)}
+                    />
+                )}
             </div>
         </>
     );
+
+    function DetailsModal({ user, onClose }) {
+        return (
+            <div className="modal-overlay">
+                <div className="glass-card modal-content" style={{ maxWidth: 500 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+                        <h3>Participant Details</h3>
+                        <button className="btn btn-sm btn-secondary" onClick={onClose}>Close</button>
+                    </div>
+                    <div style={{ display: "grid", gap: 12 }}>
+                        <div><strong>Team:</strong> {user.team}</div>
+                        <div><strong>College:</strong> {user.college || "N/A"}</div>
+                        <div style={{ borderTop: "1px solid var(--border)", paddingTop: 8 }}>
+                            <strong>Member 1:</strong>
+                            <div>Name: {user.member1Name || user.name}</div>
+                            <div>Mobile: {user.member1Mobile || "N/A"}</div>
+                        </div>
+                        {user.member2Name && (
+                            <div style={{ borderTop: "1px solid var(--border)", paddingTop: 8 }}>
+                                <strong>Member 2:</strong>
+                                <div>Name: {user.member2Name}</div>
+                                <div>Mobile: {user.member2Mobile || "N/A"}</div>
+                            </div>
+                        )}
+                        <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: 8 }}>
+                            Email: {user.email}<br />
+                            UID: {user.id}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     function SubmissionModal({ submission, onClose }) {
         const [activeCode, setActiveCode] = useState("html");

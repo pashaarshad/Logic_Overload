@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import PasswordGate from "@/components/PasswordGate";
-import { getRoundConfig, getAttempt } from "@/lib/firestore";
+import { getRoundConfig, getAttempt, updateUserDoc, calculateScore } from "@/lib/firestore";
 
 const ROUND_INFO = [
     {
@@ -150,6 +150,71 @@ export default function DashboardPage() {
             setPasswordError("Incorrect password");
         }
     };
+
+    // ─── Profile Completion Logic ───
+    const [isProfileSaving, setIsProfileSaving] = useState(false);
+
+    // If user is candidate and missing college, show form
+    if (user && userData && userData.role !== "admin" && !userData.college) {
+        return (
+            <div className="page-center">
+                <Navbar />
+                <div className="glass-card" style={{ maxWidth: 600, margin: "40px auto" }}>
+                    <h2 className="section-title" style={{ textAlign: "center", marginBottom: 24 }}>🎓 Complete Registration</h2>
+                    <p style={{ textAlign: "center", marginBottom: 24, opacity: 0.8 }}>Please provide your team details to proceed.</p>
+                    <form onSubmit={async (e) => {
+                        e.preventDefault();
+                        setIsProfileSaving(true);
+                        try {
+                            const formData = {
+                                college: e.target.college.value.trim(),
+                                member1Name: e.target.m1name.value.trim(),
+                                member1Mobile: e.target.m1mobile.value.trim(),
+                                member2Name: e.target.m2name.value.trim(),
+                                member2Mobile: e.target.m2mobile.value.trim(),
+                            };
+                            await updateUserDoc(user.uid, formData);
+                            window.location.reload(); // Reload to refresh auth context
+                        } catch (err) {
+                            alert("Error saving profile: " + err.message);
+                            setIsProfileSaving(false);
+                        }
+                    }}>
+                        <div className="input-group">
+                            <label>College Name</label>
+                            <input name="college" className="input" required placeholder="Enter your college name" />
+                        </div>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                            <div className="input-group">
+                                <label>Member 1 Name</label>
+                                <input name="m1name" className="input" required defaultValue={userData.name} />
+                            </div>
+                            <div className="input-group">
+                                <label>Member 1 Mobile</label>
+                                <input name="m1mobile" className="input" required placeholder="Mobile Number" />
+                            </div>
+                        </div>
+
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                            <div className="input-group">
+                                <label>Member 2 Name</label>
+                                <input name="m2name" className="input" placeholder="Optional" />
+                            </div>
+                            <div className="input-group">
+                                <label>Member 2 Mobile</label>
+                                <input name="m2mobile" className="input" placeholder="Mobile Number" />
+                            </div>
+                        </div>
+
+                        <button className="btn btn-primary btn-full" disabled={isProfileSaving}>
+                            {isProfileSaving ? "Saving..." : "Save & Continue"}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
 
     if (loading || !user) {
         return (
