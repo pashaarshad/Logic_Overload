@@ -170,16 +170,16 @@ echo factorial(5);
     q3: {
         id: "q3",
         title: "Problem 3: Two Sum (LeetCode #1)",
-        description: "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
-        example: "Input: nums = [2,7,11,15], target = 9\nOutput: [0,1] (Explanation: nums[0] + nums[1] == 9)",
-        instruction: "Solve this problem locally and paste your working solution code below."
+        description: "Given an array of integers `nums` and an integer `target`, return indices of the two numbers such that they add up to `target`.",
+        link: "https://leetcode.com/problems/two-sum/",
+        instruction: "Solve this problem on LeetCode or your local machine."
     },
     q4: {
         id: "q4",
         title: "Problem 4: Remove Duplicates (LeetCode #26)",
-        description: "Given an integer array `nums` sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative order of the elements should be kept the same. Return the number of unique elements.",
-        example: "Input: nums = [1,1,2]\nOutput: 2, nums = [1,2,_] (Explanation: First two elements are 1 and 2)",
-        instruction: "Solve this problem locally and paste your working solution code below."
+        description: "Given an integer array `nums` sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once.",
+        link: "https://leetcode.com/problems/remove-duplicates-from-sorted-array/",
+        instruction: "Solve this problem on LeetCode or your local machine."
     }
 };
 
@@ -382,41 +382,31 @@ export default function Round3Page() {
     const renderManualProblem = (qId) => {
         const problem = PROBLEMS[qId];
         return (
-            <div className="glass-card" style={{ maxWidth: "800px", margin: "0 auto" }}>
+            <div className="glass-card" style={{ maxWidth: "800px", margin: "0 auto", textAlign: "center" }}>
                 <h2 style={{ color: "var(--accent-primary)", marginBottom: "15px" }}>{problem.title}</h2>
-                <p style={{ lineHeight: "1.6", whiteSpace: "pre-line", marginBottom: "20px" }}>{problem.description}</p>
+                <p style={{ lineHeight: "1.6", whiteSpace: "pre-line", marginBottom: "30px", fontSize: "1.1rem" }}>{problem.description}</p>
 
-                {problem.pattern && (
-                    <div style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "8px", marginBottom: "20px", textAlign: "left" }}>
-                        <pre style={{ margin: 0, fontFamily: "monospace", color: "var(--text-primary)", fontSize: "1.2rem", lineHeight: "1.5" }}>{problem.pattern}</pre>
-                    </div>
-                )}
-
-                {problem.example && (
-                    <div style={{ background: "rgba(0,0,0,0.2)", padding: "15px", borderRadius: "8px", marginBottom: "20px" }}>
-                        <h4 style={{ color: "var(--text-secondary)", marginBottom: "8px" }}>Example:</h4>
-                        <pre style={{ margin: 0, fontFamily: "monospace", color: "#4caf50" }}>{problem.example}</pre>
-                    </div>
-                )}
-
-                <div style={{ marginBottom: "20px" }}>
-                    <p style={{ color: "var(--text-secondary)", fontStyle: "italic" }}>{problem.instruction}</p>
+                <div style={{ marginBottom: "40px" }}>
+                    <a
+                        href={problem.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="btn btn-primary"
+                        style={{ fontSize: "1.2rem", padding: "15px 30px", textDecoration: "none" }}
+                    >
+                        🚀 Solve on LeetCode
+                    </a>
                 </div>
 
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                    <label style={{ marginBottom: "5px", fontWeight: "bold" }}>Your Solution Code:</label>
-                    <textarea
-                        value={answers[qId]}
-                        onChange={(e) => handleCodeChange(qId, e.target.value)}
-                        placeholder="// Paste your code here..."
-                        style={{
-                            padding: "15px", minHeight: "300px",
-                            background: "var(--bg-primary)", color: "var(--text-primary)",
-                            border: "1px solid var(--border)", borderRadius: "8px",
-                            fontFamily: "monospace", resize: "vertical"
-                        }}
-                        spellCheck="false"
-                    />
+                <div style={{ background: "rgba(0,0,0,0.2)", padding: "20px", borderRadius: "8px" }}>
+                    <h3 style={{ marginBottom: "10px", color: "var(--text-primary)" }}>Instructions</h3>
+                    <p style={{ color: "var(--text-secondary)", marginBottom: "10px" }}>{problem.instruction}</p>
+                    <div style={{ color: "#4caf50", fontWeight: "bold", fontSize: "1.2rem", marginTop: "15px" }}>
+                        🏆 Reward: 500 Marks
+                    </div>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginTop: "10px", opacity: 0.8 }}>
+                        (Verification will be done manually by Admins. Please maximize your score!)
+                    </p>
                 </div>
             </div>
         );
