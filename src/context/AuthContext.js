@@ -23,9 +23,9 @@ export function AuthProvider({ children }) {
                     // First login check
 
                     // Special check for Admin email to prevent Team assignment
-                    if (firebaseUser.email === "arshad@logic.com") {
+                    if (firebaseUser.email === "arshad@logic.com" || firebaseUser.email === "arsh@logic.com") {
                         const newUser = {
-                            name: "Arshad Admin",
+                            name: firebaseUser.email.split("@")[0] + " Admin",
                             email: firebaseUser.email,
                             role: "admin",
                             // No team assigned

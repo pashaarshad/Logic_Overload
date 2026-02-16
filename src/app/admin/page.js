@@ -156,23 +156,20 @@ export default function AdminPage() {
                     <h2 className="section-title" style={{ textAlign: "center", marginBottom: 24 }}>🛡️ Admin Login</h2>
                     <form onSubmit={async (e) => {
                         e.preventDefault();
-                        const username = e.target.username.value.trim();
-                        const password = e.target.password.value.trim();
+                        const usernameVal = e.target.username.value.trim();
+                        const passwordVal = e.target.password.value.trim();
 
-                        if ((username.toLowerCase() === "arshad" || username.toLowerCase() === "arsh") && password === "logic65") {
+                        if ((usernameVal.toLowerCase() === "arshad" || usernameVal.toLowerCase() === "arsh") && passwordVal === "logic65") {
                             setMessage("🔄 Authenticating...");
-                            const email = "arshad@logic.com";
+                            const email = usernameVal.toLowerCase() === "arsh" ? "arsh@logic.com" : "arshad@logic.com";
                             try {
-                                const cred = await signInWithEmailAndPassword(auth, email, password);
-                                // Ensure admin role is set (fixes accidental role overwrite)
-                                await updateUserDoc(cred.user.uid, { role: "admin", name: "Arshad Admin" });
+                                const cred = await signInWithEmailAndPassword(auth, email, passwordVal);
+                                await updateUserDoc(cred.user.uid, { role: "admin", name: `${usernameVal} Admin` });
                             } catch (err) {
                                 if (err.code === "auth/user-not-found" || err.code === "auth/invalid-credential") {
-                                    // Auto-create if not exists
                                     try {
-                                        const cred = await createUserWithEmailAndPassword(auth, email, password);
-                                        await updateUserDoc(cred.user.uid, { role: "admin", name: "Arshad Admin" });
-                                        // login successful
+                                        const cred = await createUserWithEmailAndPassword(auth, email, passwordVal);
+                                        await updateUserDoc(cred.user.uid, { role: "admin", name: `${usernameVal} Admin` });
                                     } catch (createErr) {
                                         showMessage("❌ Create Failed: " + createErr.message);
                                     }
@@ -184,6 +181,10 @@ export default function AdminPage() {
                             showMessage("❌ Invalid credentials");
                         }
                     }}>
+                        <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                            <button type="button" className="btn btn-sm btn-secondary" onClick={() => document.querySelector('input[name="username"]').value = "arshad"}>Arshad</button>
+                            <button type="button" className="btn btn-sm btn-secondary" onClick={() => document.querySelector('input[name="username"]').value = "arsh"}>Arsh</button>
+                        </div>
                         <div className="input-group" style={{ marginBottom: 16 }}>
                             <label>Username</label>
                             <input name="username" className="input" placeholder="arshad" autoFocus autoComplete="username" />
