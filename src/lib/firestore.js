@@ -183,43 +183,41 @@ export async function seedRounds() {
 
 export async function seedQuestions() {
     const questions = [
-        // 1-5: Shell, Basic OS, DS, Java
-        { order: 1, question: "Which command lists files in a directory in Linux?", options: ["ls", "dir", "show", "list"], correctAnswer: 0, roundId: "round1" },
-        { order: 2, question: "Which data structure follows LIFO?", options: ["Queue", "Stack", "Tree", "Graph"], correctAnswer: 1, roundId: "round1" },
-        { order: 3, question: "What acts as a bridge between hardware and software?", options: ["Compiler", "Operating System", "Interpreter", "Assembler"], correctAnswer: 1, roundId: "round1" },
-        { order: 4, question: "In Java, standard output is printed using?", options: ["System.out.print", "console.log", "print", "echo"], correctAnswer: 0, roundId: "round1" },
-        { order: 5, question: "Which command changes the current directory?", options: ["mv", "cd", "cp", "pwd"], correctAnswer: 1, roundId: "round1" },
+        // 1-10: Medium (General CS, Web, OS)
+        { order: 1, question: "If you are a developer and want to create a website using HTML/CSS, what should you name the first main file that opens automatically?", options: ["index.html", "home.html", "main.html", "veryimportant.html"], correctAnswer: 0, roundId: "round1" },
+        { order: 2, question: "Which protocol is primarily used for loading web pages?", options: ["SMTP", "HTTP", "FTP", "SSH"], correctAnswer: 1, roundId: "round1" },
+        { order: 3, question: "What is the full form of CSS?", options: ["Computer Style Sheets", "Creative Style System", "Cascading Style Sheets", "Colorful Style Sheets"], correctAnswer: 2, roundId: "round1" },
+        { order: 4, question: "Which data structure uses the LIFO (Last In First Out) principle?", options: ["Queue", "Array", "Stack", "Tree"], correctAnswer: 2, roundId: "round1" },
+        { order: 5, question: "What acts as a translator between code and machine language line-by-line?", options: ["Compiler", "Interpreter", "Assembler", "Linker"], correctAnswer: 1, roundId: "round1" },
+        { order: 6, question: "In Python, which keyword is used to define a function?", options: ["function", "def", "func", "define"], correctAnswer: 1, roundId: "round1" },
+        { order: 7, question: "Which memory is non-volatile and retains data without power?", options: ["RAM", "Cache", "Register", "ROM"], correctAnswer: 3, roundId: "round1" },
+        { order: 8, question: "What is the binary representation of decimal number 10?", options: ["1001", "1010", "1100", "0101"], correctAnswer: 1, roundId: "round1" },
+        { order: 9, question: "Which SQL command is used to remove data from a table?", options: ["REMOVE", "DROP", "DELETE", "CLEAR"], correctAnswer: 2, roundId: "round1" },
+        { order: 10, question: "Who is known as the father of modern computers?", options: ["Alan Turing", "Charles Babbage", "Bill Gates", "Steve Jobs"], correctAnswer: 1, roundId: "round1" },
 
-        // 6-12: Python, PHP, Networking, Cybersecurity
-        { order: 6, question: "What is the file extension for Python?", options: [".py", ".pt", ".python", ".p"], correctAnswer: 0, roundId: "round1" },
-        { order: 7, question: "PHP scripts define blocks using?", options: ["<?php ... ?>", "<script ...>", "<? ... ?>", "<php ...>"], correctAnswer: 0, roundId: "round1" },
-        { order: 8, question: "Which OSI layer transmits raw bits?", options: ["Physical", "Data Link", "Network", "Transport"], correctAnswer: 0, roundId: "round1" },
-        { order: 9, question: "What is 127.0.0.1?", options: ["Public IP", "Localhost", "Router IP", "Gateway"], correctAnswer: 1, roundId: "round1" },
-        { order: 10, question: "What does SQL Injection target?", options: ["Operating System", "Database", "Firewall", "Network"], correctAnswer: 1, roundId: "round1" },
-        { order: 11, question: "Which port does HTTPS use?", options: ["80", "21", "443", "25"], correctAnswer: 2, roundId: "round1" },
-        { order: 12, question: "Who is known as the father of AI?", options: ["Alan Turing", "John McCarthy", "Elon Musk", "Guido van Rossum"], correctAnswer: 1, roundId: "round1" },
+        // 11-20: Medium-High (Networking, Programming Logic)
+        { order: 11, question: "What is the time complexity of a Binary Search algorithm?", options: ["O(n)", "O(n^2)", "O(log n)", "O(1)"], correctAnswer: 2, roundId: "round1" },
+        { order: 12, question: "Which OOP concept is about wrapping data and methods into a single unit?", options: ["Inheritance", "Polymorphism", "Encapsulation", "Abstraction"], correctAnswer: 2, roundId: "round1" },
+        { order: 13, question: "In Networking, which layer of the OSI model handles encryption?", options: ["Application", "Presentation", "Session", "Transport"], correctAnswer: 1, roundId: "round1" },
+        { order: 14, question: "Which command in Linux grants superuser (admin) permissions?", options: ["admin", "root", "execute", "sudo"], correctAnswer: 3, roundId: "round1" },
+        { order: 15, question: "What does the 'S' in HTTPS stand for?", options: ["Simple", "Secure", "System", "Standard"], correctAnswer: 1, roundId: "round1" },
+        { order: 16, question: "What does DNS stand for in networking?", options: ["Domain Name System", "Digital Network Service", "Data Naming Source", "Dynamic Network Server"], correctAnswer: 0, roundId: "round1" },
+        { order: 17, question: "Which of these is a NoSQL database?", options: ["MySQL", "PostgreSQL", "Oracle", "MongoDB"], correctAnswer: 3, roundId: "round1" },
+        { order: 18, question: "What is the default port for SSH?", options: ["21", "22", "80", "443"], correctAnswer: 1, roundId: "round1" },
+        { order: 19, question: "Which file extension represents a compiled Java class file?", options: [".java", ".js", ".class", ".jar"], correctAnswer: 2, roundId: "round1" },
+        { order: 20, question: "In cybersecurity, what is 'Phishing'?", options: ["Validating Inputs", "Optimizing Code", "Deceptive E-mail Attacks", "Testing Firewalls"], correctAnswer: 2, roundId: "round1" },
 
-        // 13-19: Final Year topics (AI, General CS)
-        { order: 13, question: "What is the third layer of the OSI Model?", options: ["Physical", "Data Link", "Network", "Transport"], correctAnswer: 2, roundId: "round1" },
-        { order: 14, question: "Which algorithm mimics the human brain?", options: ["Neural Networks", "Genetic", "Greedy", "Sorting"], correctAnswer: 0, roundId: "round1" },
-        { order: 15, question: "Who founded the World Wide Web?", options: ["Tim Berners-Lee", "Bill Gates", "Steve Jobs", "Vint Cerf"], correctAnswer: 0, roundId: "round1" },
-        { order: 16, question: "What represents 'TRUE' in binary?", options: ["0", "1", "-1", "10"], correctAnswer: 1, roundId: "round1" },
-        { order: 17, question: "Which is a volatile memory?", options: ["ROM", "HDD", "RAM", "SSD"], correctAnswer: 2, roundId: "round1" },
-        { order: 18, question: "What does GUI stand for?", options: ["Graphical User Interface", "Global User Interface", "General Unit Interface", "Gaming User Interface"], correctAnswer: 0, roundId: "round1" },
-        { order: 19, question: "Who created Bitcoin?", options: ["Satoshi Nakamoto", "Vitalik Buterin", "Charlie Lee", "Banks"], correctAnswer: 0, roundId: "round1" },
-
-        // 20-30: New & General Tech
-        { order: 20, question: "What does IoT stand for?", options: ["Internet of Things", "Intranet of Technology", "Interconnected Operational Tech", "Input Output Tools"], correctAnswer: 0, roundId: "round1" },
-        { order: 21, question: "Which company owns Github?", options: ["Google", "Facebook", "Microsoft", "Amazon"], correctAnswer: 2, roundId: "round1" },
-        { order: 22, question: "React.js was developed by?", options: ["Google", "Facebook (Meta)", "Twitter", "Apple"], correctAnswer: 1, roundId: "round1" },
-        { order: 23, question: "Linux is which type of OS?", options: ["Proprietary", "Open Source", "Paid", "Closed Source"], correctAnswer: 1, roundId: "round1" },
-        { order: 24, question: "Which device forwards packets between networks?", options: ["Hub", "Switch", "Router", "Modem"], correctAnswer: 2, roundId: "round1" },
-        { order: 25, question: "What allows secure remote login?", options: ["Telnet", "SSH", "FTP", "HTTP"], correctAnswer: 1, roundId: "round1" },
-        { order: 26, question: "Docker is used for?", options: ["Virtualization", "Containerization", "Compilation", "Database"], correctAnswer: 1, roundId: "round1" },
-        { order: 27, question: "Big O notation describes?", options: ["Algorithm Speed", "Algorithm Complexity", "Disk Space", "RAM Size"], correctAnswer: 1, roundId: "round1" },
-        { order: 28, question: "Main component of Android OS?", options: ["C# Kernel", "Linux Kernel", "Windows Kernel", "Java Kernel"], correctAnswer: 1, roundId: "round1" },
-        { order: 29, question: "JSON stands for?", options: ["JavaScript Object Notation", "Java System Object Network", "Java Standard Output Node", "JavaScript Online Network"], correctAnswer: 0, roundId: "round1" },
-        { order: 30, question: "Which tag is used for line break in HTML?", options: ["<lb>", "<br>", "<break>", "<newline>"], correctAnswer: 1, roundId: "round1" },
+        // 21-30: Hard (BCA/MCA, Cyber, FTP, UDP, Extensions)
+        { order: 21, question: "Which protocol is connectionless and does not guarantee packet delivery?", options: ["TCP", "UDP", "HTTP", "FTP"], correctAnswer: 1, roundId: "round1" },
+        { order: 22, question: "Which command is used to check the connectivity between two nodes?", options: ["ipconfig", "netstat", "ping", "nslookup"], correctAnswer: 2, roundId: "round1" },
+        { order: 23, question: "What does FTP stand for?", options: ["File Transfer Protocol", "Fast Transfer Protocol", "File Transmission Path", "Folder Transfer Process"], correctAnswer: 0, roundId: "round1" },
+        { order: 24, question: "Which port is standard for FTP Control connection?", options: ["20", "21", "23", "25"], correctAnswer: 1, roundId: "round1" },
+        { order: 25, question: "What type of malware blocks access to data until a fee is paid?", options: ["Spyware", "Adware", "Ransomware", "Trojan"], correctAnswer: 2, roundId: "round1" },
+        { order: 26, question: "What is 'Salt' in cryptography?", options: ["A key generation algorithm", "Random data added to passwords before hashing", "A type of encryption", "The output of a hash function"], correctAnswer: 1, roundId: "round1" },
+        { order: 27, question: "Which file extension is typically used for a backup file?", options: [".tmp", ".bak", ".exe", ".bin"], correctAnswer: 1, roundId: "round1" },
+        { order: 28, question: "In IP addressing, what is the length of an IPv6 address?", options: ["32 bits", "64 bits", "128 bits", "256 bits"], correctAnswer: 2, roundId: "round1" },
+        { order: 29, question: "Which attack involves overwhelming a server with traffic?", options: ["SQL Injection", "XSS", "DDoS", "Brute Force"], correctAnswer: 2, roundId: "round1" },
+        { order: 30, question: "What is the purpose of a VPN?", options: ["Increase internet speed", "Create a secure encrypted tunnel", "Block ads", "Host websites"], correctAnswer: 1, roundId: "round1" },
     ];
 
     const batch = writeBatch(db);
