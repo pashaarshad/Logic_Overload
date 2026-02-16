@@ -134,7 +134,7 @@ export default function DashboardPage() {
         // Fallback passwords in case Firestore/Cache fails
         const defaults = {
             "round1": "logic001",
-            "round2": "logic001", // Assuming user wants same password for simplicity or I'll stick to logic001 if they want
+            "round2": "overload002",
             "round3": "logic001",
             "round4": "logic001"
         };

@@ -39,6 +39,7 @@ export default function AdminPage() {
     const [roundConfigs, setRoundConfigs] = useState({});
     const [pageLoading, setPageLoading] = useState(true);
     const [editingQuestion, setEditingQuestion] = useState(null);
+    const [viewSubmission, setViewSubmission] = useState(null);
     const [message, setMessage] = useState("");
 
 
@@ -436,11 +437,22 @@ export default function AdminPage() {
                                                                             <input
                                                                                 className="score-input"
                                                                                 type="number"
+                                                                                key={attempt?.adminScore} // Force re-render on update
                                                                                 defaultValue={score}
                                                                                 onBlur={(e) => handleUpdateScore(u.id, roundId, e.target.value)}
                                                                                 placeholder="—"
                                                                                 style={{ width: "60px" }}
                                                                             />
+                                                                            {attempt && roundId === "round2" && (
+                                                                                <button
+                                                                                    className="btn btn-sm btn-primary"
+                                                                                    style={{ padding: "4px 8px", fontSize: "1rem" }}
+                                                                                    onClick={() => setViewSubmission(attempt)}
+                                                                                    title="View Submission"
+                                                                                >
+                                                                                    👁️
+                                                                                </button>
+                                                                            )}
                                                                             {attempt && (
                                                                                 <button
                                                                                     className="btn btn-sm btn-danger"
@@ -502,7 +514,105 @@ export default function AdminPage() {
                         </>
                     )}
                 </main>
+
+                {viewSubmission && (
+                    <SubmissionModal
+                        submission={viewSubmission}
+                        onClose={() => setViewSubmission(null)}
+                    />
+                )}
             </div>
         </>
     );
+
+    function SubmissionModal({ submission, onClose }) {
+        const [activeCode, setActiveCode] = useState("html");
+        const [score, setScore] = useState(submission.adminScore || "");
+
+        const previewSrc = `
+      <html>
+        <head><style>${submission.css || ""}</style></head>
+        <body>${submission.html || ""}<script>${submission.js || ""}<\/script></body>
+      </html>
+    `;
+
+        return (
+            <div style={{
+                position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", zIndex: 2000,
+                display: "flex", alignItems: "center", justifyContent: "center", padding: 20
+            }}>
+                <div className="glass-card" style={{ width: "100%", height: "100%", maxWidth: 1400, display: "flex", flexDirection: "column", padding: 0, overflow: "hidden" }}>
+                    {/* Header */}
+                    <div style={{ padding: "16px 24px", borderBottom: "1px solid var(--border)", display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(0,0,0,0.2)" }}>
+                        <div>
+                            <h3 style={{ margin: 0 }}>Participant: {submission.name} ({submission.team})</h3>
+                            <div style={{ fontSize: "0.85rem", opacity: 0.7 }}>Task: {submission.design?.name || "Unknown"}</div>
+                        </div>
+                        <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
+                            <div className="input-group" style={{ flexDirection: "row", alignItems: "center", marginBottom: 0 }}>
+                                <label style={{ marginBottom: 0, marginRight: 8 }}>Score:</label>
+                                <input
+                                    className="input"
+                                    type="number"
+                                    style={{ width: 80, padding: "8px" }}
+                                    value={score}
+                                    onChange={(e) => setScore(e.target.value)}
+                                />
+                                <button className="btn btn-success" onClick={() => {
+                                    handleUpdateScore(submission.id.split("_")[0], "round2", score);
+                                    onClose();
+                                }}>Save</button>
+                            </div>
+                            <button className="btn btn-secondary" onClick={onClose}>Close</button>
+                        </div>
+                    </div>
+
+                    {/* Body */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", flex: 1, minHeight: 0 }}>
+                        {/* Editor View */}
+                        <div style={{ borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column" }}>
+                            <div style={{ display: "flex", borderBottom: "1px solid var(--border)" }}>
+                                {["html", "css", "js"].map(lang => (
+                                    <button
+                                        key={lang}
+                                        onClick={() => setActiveCode(lang)}
+                                        style={{
+                                            flex: 1, padding: 12, border: "none", cursor: "pointer",
+                                            background: activeCode === lang ? "rgba(255,255,255,0.1)" : "transparent",
+                                            color: activeCode === lang ? "var(--accent-primary)" : "var(--text-secondary)",
+                                            fontWeight: 600
+                                        }}
+                                    >
+                                        {lang.toUpperCase()}
+                                    </button>
+                                ))}
+                            </div>
+                            <textarea
+                                readOnly
+                                value={submission[activeCode] || ""}
+                                style={{
+                                    flex: 1, width: "100%", padding: 16, resize: "none", border: "none", outline: "none",
+                                    background: "transparent", color: "var(--text-primary)", fontFamily: "var(--font-mono)",
+                                    lineHeight: 1.5
+                                }}
+                            />
+                        </div>
+
+                        {/* Preview */}
+                        <div style={{ background: "white", display: "flex", flexDirection: "column" }}>
+                            <div style={{ padding: "8px 16px", background: "#f0f0f0", color: "#333", borderBottom: "1px solid #ccc", fontSize: "0.8rem", fontWeight: 600 }}>
+                                Output Preview
+                            </div>
+                            <iframe
+                                srcDoc={previewSrc}
+                                style={{ flex: 1, width: "100%", border: "none" }}
+                                sandbox="allow-scripts"
+                                title="Preview"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 }

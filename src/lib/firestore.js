@@ -148,10 +148,10 @@ export async function seedRounds() {
         {
             id: "round2",
             title: "Frontend Design Challenge",
-            password: "round2SDCArsh",
+            password: "overload002",
             timeLimit: 45,
             totalQuestions: 0,
-            isActive: false,
+            isActive: true,
             type: "design",
         },
         {

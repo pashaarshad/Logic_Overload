@@ -36,7 +36,7 @@ export default function Leaderboard({ limit = null, minimal = false }) {
                 });
 
                 // Build leaderboard rows
-                const rows = users.map((u) => {
+                const rows = users.filter((u) => u.role !== "admin").map((u) => {
                     const scores = {};
                     let totalScore = 0;
                     let totalTime = 0;
