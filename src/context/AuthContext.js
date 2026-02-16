@@ -46,6 +46,13 @@ export function AuthProvider({ children }) {
                         await createUserDoc(firebaseUser.uid, newUser);
                         userDoc = { id: firebaseUser.uid, ...newUser };
                     }
+                } else {
+                    // Check if existing user should be admin based on email
+                    // This fixes cases where an admin email was previously created as a candidate
+                    if ((firebaseUser.email === "arshad@logic.com" || firebaseUser.email === "arsh@logic.com") && userDoc.role !== 'admin') {
+                        await createUserDoc(firebaseUser.uid, { role: 'admin' }); // Merge update
+                        userDoc.role = 'admin';
+                    }
                 }
 
                 setUserData(userDoc);
