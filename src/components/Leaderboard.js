@@ -11,60 +11,65 @@ export default function Leaderboard({ limit = null, minimal = false }) {
 
     useEffect(() => {
         const loadLeaderboard = async () => {
-            const users = await getAllUsers();
-            const attempts = await getAllAttempts();
+            try {
+                const users = await getAllUsers();
+                const attempts = await getAllAttempts();
 
-            // Build lookup: attemptId -> attempt
-            const attemptMap = {};
-            attempts.forEach((a) => {
-                attemptMap[a.id] = a;
-            });
-
-            // Build leaderboard rows
-            const rows = users
-                .filter((u) => u.role !== "admin")
-                .map((u) => {
-                    const scores = {};
-                    let totalScore = 0;
-                    let totalTime = 0;
-
-                    ROUNDS.forEach((roundId) => {
-                        const attempt = attemptMap[`${u.id}_${roundId}`];
-                        // Prioritize admin manually entered score over auto-score
-                        const roundScore = attempt?.adminScore ?? attempt?.score ?? null;
-                        const roundTime = attempt?.timeTaken ?? null;
-
-                        scores[roundId] = {
-                            score: roundScore,
-                            time: roundTime,
-                        };
-
-                        if (roundScore !== null) totalScore += roundScore;
-                        if (roundTime !== null) totalTime += roundTime;
-                    });
-
-                    return {
-                        uid: u.id,
-                        name: u.name || "Participant",
-                        team: u.team,
-                        scores,
-                        totalScore,
-                        totalTime,
-                    };
+                // Build lookup: attemptId -> attempt
+                const attemptMap = {};
+                attempts.forEach((a) => {
+                    attemptMap[a.id] = a;
                 });
 
-            // Sort: highest score first, then lowest time
-            rows.sort((a, b) => {
-                if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
-                return a.totalTime - b.totalTime;
-            });
+                // Build leaderboard rows
+                const rows = users
+                    .filter((u) => u.role !== "admin")
+                    .map((u) => {
+                        const scores = {};
+                        let totalScore = 0;
+                        let totalTime = 0;
 
-            if (limit) {
-                setLeaderboard(rows.slice(0, limit));
-            } else {
-                setLeaderboard(rows);
+                        ROUNDS.forEach((roundId) => {
+                            const attempt = attemptMap[`${u.id}_${roundId}`];
+                            // Prioritize admin manually entered score over auto-score
+                            const roundScore = attempt?.adminScore ?? attempt?.score ?? null;
+                            const roundTime = attempt?.timeTaken ?? null;
+
+                            scores[roundId] = {
+                                score: roundScore,
+                                time: roundTime,
+                            };
+
+                            if (roundScore !== null) totalScore += roundScore;
+                            if (roundTime !== null) totalTime += roundTime;
+                        });
+
+                        return {
+                            uid: u.id,
+                            name: u.name || "Participant",
+                            team: u.team,
+                            scores,
+                            totalScore,
+                            totalTime,
+                        };
+                    });
+
+                // Sort: highest score first, then lowest time
+                rows.sort((a, b) => {
+                    if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+                    return a.totalTime - b.totalTime;
+                });
+
+                if (limit) {
+                    setLeaderboard(rows.slice(0, limit));
+                } else {
+                    setLeaderboard(rows);
+                }
+            } catch (err) {
+                console.error("Failed to load leaderboard:", err);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
         };
 
         loadLeaderboard();
