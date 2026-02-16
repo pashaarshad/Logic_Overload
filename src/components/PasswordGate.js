@@ -35,6 +35,7 @@ export default function PasswordGate({ roundTitle, onSuccess, onClose }) {
                                 setError("");
                             }}
                             autoFocus
+                            autoComplete="off"
                         />
                         {error && <div className="modal-error">{error}</div>}
                     </div>

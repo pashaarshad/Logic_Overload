@@ -165,11 +165,11 @@ export default function AdminPage() {
                     }}>
                         <div className="input-group" style={{ marginBottom: 16 }}>
                             <label>Username</label>
-                            <input name="username" className="input" placeholder="arshad" autoFocus />
+                            <input name="username" className="input" placeholder="arshad" autoFocus autoComplete="username" />
                         </div>
                         <div className="input-group" style={{ marginBottom: 24 }}>
                             <label>Password</label>
-                            <input name="password" type="password" className="input" placeholder="•••••••" />
+                            <input name="password" type="password" className="input" placeholder="•••••••" autoComplete="current-password" />
                         </div>
                         <button className="btn btn-primary btn-full">Login as Admin</button>
                         {message && <div style={{ marginTop: 16, textAlign: "center", color: "var(--accent-primary)" }}>{message}</div>}
