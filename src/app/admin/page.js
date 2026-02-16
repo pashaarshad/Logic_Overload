@@ -105,6 +105,14 @@ export default function AdminPage() {
         loadData();
     };
 
+    const handleDeleteAttempt = async (uid, roundId) => {
+        if (!confirm("Are you sure you want to completely RESET this attempt? This action cannot be undone.")) return;
+        setPageLoading(true);
+        await deleteAttempt(uid, roundId);
+        showMessage("🗑️ Attempt reset!");
+        loadData();
+    };
+
     // ─── Make Admin ───
     const handleToggleAdmin = async (uid, currentRole) => {
         const newRole = currentRole === "admin" ? "candidate" : "admin";
@@ -406,13 +414,26 @@ export default function AdminPage() {
 
                                                                 return (
                                                                     <td key={roundId}>
-                                                                        <input
-                                                                            className="score-input"
-                                                                            type="number"
-                                                                            defaultValue={score}
-                                                                            onBlur={(e) => handleUpdateScore(u.id, roundId, e.target.value)}
-                                                                            placeholder="—"
-                                                                        />
+                                                                        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                                                                            <input
+                                                                                className="score-input"
+                                                                                type="number"
+                                                                                defaultValue={score}
+                                                                                onBlur={(e) => handleUpdateScore(u.id, roundId, e.target.value)}
+                                                                                placeholder="—"
+                                                                                style={{ width: "60px" }}
+                                                                            />
+                                                                            {attempt && (
+                                                                                <button
+                                                                                    className="btn btn-sm btn-danger"
+                                                                                    style={{ padding: "4px 8px", fontSize: "1rem" }}
+                                                                                    onClick={() => handleDeleteAttempt(u.id, roundId)}
+                                                                                    title="Reset Attempt"
+                                                                                >
+                                                                                    ↺
+                                                                                </button>
+                                                                            )}
+                                                                        </div>
                                                                     </td>
                                                                 );
                                                             })}
