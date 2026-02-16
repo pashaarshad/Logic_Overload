@@ -19,7 +19,7 @@ import {
     updateUserDoc,
 } from "@/lib/firestore";
 import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
 const ROUNDS = ["round1", "round2", "round3", "round4"];
 const ROUND_NAMES = {
@@ -163,7 +163,9 @@ export default function AdminPage() {
                             setMessage("🔄 Authenticating...");
                             const email = "arshad@logic.com";
                             try {
-                                await signInWithEmailAndPassword(auth, email, password);
+                                const cred = await signInWithEmailAndPassword(auth, email, password);
+                                // Ensure admin role is set (fixes accidental role overwrite)
+                                await updateUserDoc(cred.user.uid, { role: "admin", name: "Arshad Admin" });
                             } catch (err) {
                                 if (err.code === "auth/user-not-found" || err.code === "auth/invalid-credential") {
                                     // Auto-create if not exists
@@ -205,7 +207,10 @@ export default function AdminPage() {
                 <div className="glass-card" style={{ textAlign: "center", maxWidth: 400 }}>
                     <h1 className="hero-title" style={{ fontSize: "2rem", marginBottom: 16 }}>🚫 Access Denied</h1>
                     <p className="subtitle" style={{ marginBottom: 24 }}>You do not have admin permissions.</p>
-                    <button className="btn btn-secondary" onClick={() => router.push("/dashboard")}>Go to Dashboard</button>
+                    <div style={{ display: "flex", gap: 16, justifyContent: "center" }}>
+                        <button className="btn btn-secondary" onClick={() => router.push("/dashboard")}>Dashboard</button>
+                        <button className="btn btn-primary" onClick={() => signOut(auth)}>Log Out</button>
+                    </div>
                 </div>
             </div>
         );
