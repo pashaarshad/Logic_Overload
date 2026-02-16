@@ -41,7 +41,8 @@ export default function AdminPage() {
     const [pageLoading, setPageLoading] = useState(true);
     const [editingQuestion, setEditingQuestion] = useState(null);
     const [viewSubmission, setViewSubmission] = useState(null);
-    const [viewDetails, setViewDetails] = useState(null); // New state for details modal
+    const [viewDetails, setViewDetails] = useState(null);
+    const [previewDesign, setPreviewDesign] = useState(null); // New state for details modal
     const [designChallenges, setDesignChallenges] = useState([]); // New state
     const [message, setMessage] = useState("");
 
@@ -598,6 +599,7 @@ export default function AdminPage() {
                                                 <tr>
                                                     <th>Task Name</th>
                                                     <th>Description</th>
+                                                    <th>Preview</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -605,6 +607,11 @@ export default function AdminPage() {
                                                     <tr key={c.id}>
                                                         <td style={{ fontWeight: 600 }}>{c.name}</td>
                                                         <td>{c.desc}</td>
+                                                        <td>
+                                                            <button className="btn btn-sm btn-info" onClick={() => setPreviewDesign(c)}>
+                                                                👁️ Preview
+                                                            </button>
+                                                        </td>
                                                     </tr>
                                                 ))}
                                                 {designChallenges.length === 0 && (
@@ -633,9 +640,47 @@ export default function AdminPage() {
                         onClose={() => setViewDetails(null)}
                     />
                 )}
+
+                {previewDesign && (
+                    <PreviewDesignModal
+                        design={previewDesign}
+                        onClose={() => setPreviewDesign(null)}
+                    />
+                )}
             </div>
         </>
     );
+
+    function PreviewDesignModal({ design, onClose }) {
+        const src = `
+            <html>
+                <head>
+                    <style>
+                        body { margin: 0; padding: 20px; font-family: sans-serif; }
+                        ${design.css}
+                    </style>
+                </head>
+                <body>${design.html}</body>
+            </html>
+        `;
+        return (
+            <div className="modal-overlay">
+                <div className="glass-card modal-content" style={{ width: 800, height: 600, maxWidth: "90vw", display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+                        <h3>Preview: {design.name}</h3>
+                        <button className="btn btn-sm btn-secondary" onClick={onClose}>Close</button>
+                    </div>
+                    <div style={{ flex: 1, background: "white", borderRadius: 8, overflow: "hidden", border: "1px solid #ddd" }}>
+                        <iframe
+                            srcDoc={src}
+                            style={{ width: "100%", height: "100%", border: "none" }}
+                            title="Design Preview"
+                        />
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     function DetailsModal({ user, onClose }) {
         return (
